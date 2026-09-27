@@ -1,0 +1,3896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Navin&#39;s Wealth Planner · SIP, SWP &amp; Retirement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f0e6;
+    --paper-2:#efe9da;
+    --card:#fbf9f3;
+    --ink:#1c211c;
+    --ink-soft:#454c43;
+    --ink-faint:#8b9088;
+    --line:#d9d2c2;
+    --forest:#14543b;
+    --forest-deep:#0e3a29;
+    --brass:#b88a2e;
+    --brass-soft:#c79a3f;
+    --good:#2f7d54;
+    --warn:#c2901f;
+    --bad:#bc4f2c;
+    --shadow:0 1px 2px rgba(28,33,28,.06), 0 12px 30px -12px rgba(28,33,28,.18);
+    --shadow-lg:0 2px 4px rgba(28,33,28,.08), 0 26px 60px -22px rgba(20,84,59,.28);
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;
+    --sans:"Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(1200px 600px at 85% -10%, rgba(20,84,59,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(184,138,46,.10), transparent 55%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+
+  /* ---------- Masthead ---------- */
+  .kicker{
+    display:flex;align-items:center;gap:12px;
+    font-size:11.5px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--brass);font-weight:600;
+  }
+  .kicker::before{content:"";width:30px;height:1px;background:var(--brass);display:inline-block;}
+  h1{
+    font-family:var(--serif);font-weight:600;font-optical-sizing:auto;
+    font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.04;margin:.12em 0 0;
+    letter-spacing:-.015em;color:var(--ink);
+  }
+  h1 em{font-style:italic;color:var(--forest);}
+  .rule{max-width:1500px;margin:10px auto 0;padding:0 28px;}
+  .rule hr{border:none;border-top:1.5px solid var(--ink);opacity:.8;margin:0;}
+
+  /* ---------- Layout ---------- */
+  main{max-width:1500px;margin:0 auto;padding:12px 28px 22px;}
+  .modebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+  .modeseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);}
+  .modeseg button{border:none;background:transparent;padding:9px 16px;font-family:var(--sans);font-weight:600;font-size:.84rem;color:var(--ink-soft);cursor:pointer;transition:.15s;}
+  .modeseg button.on{background:var(--forest);color:#fff;}
+  .modehint{font-size:.8rem;color:var(--ink-faint);}
+  .inputs-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  .charts-row.solo{grid-template-columns:1fr;}
+  .results{margin-top:16px;}
+  .result-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px;align-items:start;}
+  .result-duo .feature-card,.result-duo .advice-panel{margin-top:0;}
+  .charts-row{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;margin-top:18px;align-items:start;}
+  @media (max-width:980px){ .inputs-row,.result-duo,.charts-row{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:14px 18px 14px;
+  }
+  .panel.sticky{position:sticky;top:16px;}
+  @media (max-width:980px){ .panel.sticky{position:static;} }
+
+  .panel h2{
+    font-family:var(--serif);font-weight:600;font-size:1.12rem;margin:0 0 12px;letter-spacing:-.01em;
+  }
+  .panel .sub{color:var(--ink-faint);font-size:.82rem;margin:0 0 14px;}
+  .sub.mini{font-size:.78rem;margin:0 0 12px;color:var(--brass);font-weight:600;}
+  .phase-tag{
+    display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:700;
+    text-transform:uppercase;letter-spacing:.16em;padding:4px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .phase-tag.accum{background:rgba(20,84,59,.10);color:var(--forest);}
+  .phase-tag.swp{background:rgba(184,138,46,.14);color:#8a6517;}
+  .phase-tag .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+  .section-split{height:1px;background:var(--line);margin:18px -20px 16px;}
+
+  /* SWP enable toggle */
+  .swp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px;}
+  .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+  .switch input{position:absolute;opacity:0;width:0;height:0;}
+  .switch .track{width:42px;height:23px;border-radius:999px;background:var(--line);position:relative;transition:.18s;flex:none;}
+  .switch .knob{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(28,33,28,.3);transition:.18s;}
+  .switch input:checked + .track{background:var(--forest);}
+  .switch input:checked + .track .knob{transform:translateX(19px);}
+  .switch input:focus-visible + .track{box-shadow:0 0 0 3px rgba(20,84,59,.18);}
+  .switch .switch-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);}
+  .swp-block{transition:opacity .22s;}
+  .swp-block.off{opacity:.4;pointer-events:none;filter:grayscale(.45);}
+
+  /* ---------- Controls ---------- */
+  .ctrl{margin-bottom:9px;}
+  .ctrl:last-child{margin-bottom:0;}
+  .ctrl .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .ctrl label{font-size:.86rem;font-weight:600;color:var(--ink);}
+  .ctrl .hint{font-size:.72rem;color:var(--ink-faint);font-weight:500;}
+  .valuebox{display:flex;align-items:center;gap:5px;background:var(--paper-2);
+    border:1px solid var(--line);border-radius:9px;padding:5px 9px;transition:border-color .15s,box-shadow .15s;}
+  .valuebox:focus-within{border-color:var(--forest);box-shadow:0 0 0 3px rgba(20,84,59,.12);}
+  .valuebox .pre{color:var(--ink-faint);font-size:.86rem;font-weight:600;}
+  .valuebox input{
+    border:none;background:transparent;font-family:var(--sans);font-weight:700;
+    font-size:.96rem;color:var(--ink);width:96px;text-align:right;outline:none;
+    -moz-appearance:textfield;
+  }
+  .valuebox.pct input{width:52px;}
+  .valuebox.yr input{width:42px;}
+  .valuebox input::-webkit-outer-spin-button,
+  .valuebox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .valuebox .suf{color:var(--ink-faint);font-size:.82rem;font-weight:600;}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;
+    background:linear-gradient(90deg,var(--forest) 0%,var(--forest) var(--fill,40%),var(--line) var(--fill,40%),var(--line) 100%);
+    outline:none;cursor:pointer;margin:4px 0 1px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--card);border:2px solid var(--forest);box-shadow:0 2px 6px rgba(20,84,59,.35);
+    cursor:grab;transition:transform .12s;
+  }
+  input[type=range]::-webkit-slider-thumb:active{transform:scale(1.18);cursor:grabbing;}
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;background:var(--card);
+    border:2px solid var(--forest);box-shadow:0 2px 6px rgba(20,84,59,.35);cursor:grab;
+  }
+  /* SWP slider with safe-band gradient */
+  input[type=range].band{background:var(--bandbg, var(--line));}
+  input[type=range].band::-webkit-slider-thumb{border-color:var(--brass);box-shadow:0 2px 6px rgba(184,138,46,.45);}
+  input[type=range].band::-moz-range-thumb{border-color:var(--brass);}
+  .scalemarks{display:flex;justify-content:space-between;font-size:.68rem;color:var(--ink-faint);margin-top:4px;}
+
+  /* ---------- Safe band advisory ---------- */
+  .advice-panel{margin-top:16px;}
+  .advice-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;}
+  .advice-head .ah-title{font-family:var(--serif);font-weight:600;font-size:1.12rem;letter-spacing:-.01em;}
+  .advice-head #band_corpus{font-size:.82rem;font-weight:600;color:var(--forest);}
+  .band-track{position:relative;height:34px;border-radius:8px;background:var(--paper-2);overflow:hidden;border:1px solid var(--line);}
+  .band-zone{position:absolute;top:0;bottom:0;}
+  .band-zone.sus{background:rgba(47,125,84,.22);}
+  .band-zone.mod{background:rgba(194,144,31,.22);}
+  .band-zone.agg{background:rgba(188,79,44,.18);}
+  .band-pointer{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);}
+  .band-pointer::after{content:"";position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--ink);}
+  .band-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;font-size:.72rem;color:var(--ink-soft);}
+  .band-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .band-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+  .band-note{margin-top:8px;font-size:.74rem;color:var(--ink-faint);line-height:1.45;}
+  .verdict{display:flex;align-items:center;gap:10px;margin-top:13px;padding:11px 13px;border-radius:9px;font-size:.86rem;font-weight:600;}
+  .verdict.good{background:rgba(47,125,84,.12);color:var(--good);}
+  .verdict.warn{background:rgba(194,144,31,.14);color:#8a6517;}
+  .verdict.bad{background:rgba(188,79,44,.12);color:var(--bad);}
+  .verdict .ico{font-size:1.1rem;}
+  .suggest-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;
+    padding-top:12px;border-top:1px dashed var(--line);}
+  .suggest-row .lab{font-size:.78rem;color:var(--ink-soft);}
+  .suggest-row .val{font-family:var(--serif);font-weight:600;font-size:1.15rem;color:var(--forest);}
+  .btn{font-family:var(--sans);font-weight:600;font-size:.78rem;border:1px solid var(--forest);
+    background:var(--forest);color:#fff;border-radius:8px;padding:7px 13px;cursor:pointer;transition:.15s;white-space:nowrap;}
+  .btn:hover{background:var(--forest-deep);}
+  .btn.ghost{background:transparent;color:var(--forest);}
+  .btn.ghost:hover{background:rgba(20,84,59,.08);}
+  .view-note{font-size:.72rem;color:var(--ink-faint);text-align:right;max-width:300px;}
+  .view-note.warn{color:var(--brass);font-weight:600;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0 4px;}
+  @media (max-width:560px){ .stat-grid{grid-template-columns:1fr;} }
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 16px 12px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;}
+  .stat.invested::before{background:var(--ink-faint);}
+  .stat.returns::before{background:var(--brass);}
+  .stat.overall::before{background:var(--forest);}
+  .stat .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-faint);font-weight:700;}
+  .stat .v{font-family:var(--serif);font-weight:600;font-size:1.6rem;white-space:nowrap;
+    letter-spacing:-.01em;margin-top:4px;line-height:1.05;color:var(--ink);}
+  .stat .real{font-size:.72rem;color:var(--ink-faint);margin-top:3px;font-weight:500;}
+  .stat.overall .v{color:var(--forest);}
+
+  .feature-card{margin-top:16px;background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);
+    color:#f4f0e6;border-radius:14px;padding:22px 24px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+  .feature-card::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(199,154,63,.4),transparent 70%);}
+  .feature-card .lab{font-size:.72rem;text-transform:uppercase;letter-spacing:.16em;color:var(--brass-soft);font-weight:700;}
+  .feature-card .big{font-family:var(--serif);font-weight:600;font-size:2.7rem;white-space:nowrap;line-height:1.02;margin:8px 0 2px;}
+  .feature-card .small{color:#cdd6cc;font-size:.86rem;}
+  .feature-card .pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1;}
+  .feature-card .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;padding:9px 13px;flex:1;min-width:130px;}
+  .feature-card .pill .pk{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--brass-soft);font-weight:700;}
+  .feature-card .pill .pv{font-family:var(--serif);font-size:1.18rem;font-weight:600;margin-top:3px;}
+
+  /* ---------- Year-by-year schedule ---------- */
+  .schedule-card{margin-top:18px;}
+  .sched-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+  .sched-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .sched-scroll{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:11px;background:var(--card);}
+  table.sched{width:100%;border-collapse:separate;border-spacing:0;font-size:.85rem;}
+  table.sched th{
+    position:sticky;top:0;z-index:2;background:var(--paper-2);
+    font-size:.67rem;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-faint);
+    font-weight:700;text-align:right;padding:10px 14px;white-space:nowrap;
+    border-bottom:1px solid var(--line);
+  }
+  table.sched th:first-child{text-align:left;}
+  table.sched td{
+    padding:8px 14px;text-align:right;white-space:nowrap;
+    font-variant-numeric:tabular-nums;border-bottom:1px solid rgba(217,210,194,.55);
+  }
+  table.sched td:first-child{text-align:left;font-weight:700;color:var(--ink-soft);}
+  table.sched tbody tr:nth-child(even) td{background:rgba(28,33,28,.016);}
+  table.sched tbody tr:hover td{background:rgba(20,84,59,.07);}
+  table.sched tbody tr:last-child td{border-bottom:none;}
+  table.sched td.c-swp{font-weight:700;color:#8a6517;}
+  table.sched td.c-growth{color:var(--good);}
+  table.sched td.c-close{font-weight:700;color:var(--forest);}
+  table.sched tbody tr.dry td{background:rgba(188,79,44,.09) !important;}
+  table.sched tbody tr.dry td.c-close,
+  table.sched tbody tr.dry td:first-child{color:var(--bad);}
+  table.sched tbody tr.dry td:first-child::after{content:" · runs dry";font-weight:500;font-size:.72rem;}
+  table.sched tbody tr.part td:first-child::before{content:"◔ ";color:var(--ink-faint);}
+  table.sched tfoot td{
+    position:sticky;bottom:0;z-index:2;background:var(--paper-2);
+    font-weight:700;padding:11px 14px;text-align:right;white-space:nowrap;
+    font-variant-numeric:tabular-nums;border-top:1.5px solid var(--line);
+  }
+  table.sched tfoot td:first-child{text-align:left;text-transform:uppercase;letter-spacing:.1em;font-size:.68rem;color:var(--ink-faint);}
+  .sched-note{margin:9px 0 0;font-size:.74rem;color:var(--ink-faint);line-height:1.5;}
+
+  .chart-card{margin-top:0;}
+  .chart-card .legend{display:flex;gap:18px;flex-wrap:wrap;margin:2px 0 10px;font-size:.76rem;color:var(--ink-soft);}
+  .chart-card .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .chart-card .legend i{width:14px;height:10px;border-radius:2px;display:inline-block;}
+  .chart-wrap{position:relative;width:100%;height:300px;}
+  canvas{width:100%;height:100%;display:block;}
+  #tooltip{position:absolute;pointer-events:none;background:var(--ink);color:#f4f0e6;border-radius:8px;
+    padding:8px 10px;font-size:.74rem;line-height:1.5;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:var(--shadow);z-index:5;}
+  #tooltip b{color:var(--brass-soft);}
+
+  .split-row{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:center;margin-top:8px;}
+  @media (max-width:560px){ .split-row{grid-template-columns:1fr;} }
+  .donut-wrap{position:relative;width:200px;height:200px;margin:0 auto;}
+  .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+  .donut-center .dc-k{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-faint);font-weight:700;}
+  .donut-center .dc-v{font-family:var(--serif);font-weight:600;font-size:1.35rem;color:var(--forest);}
+  .split-legend .li{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);}
+  .split-legend .li:last-child{border-bottom:none;}
+  .split-legend .name{display:flex;align-items:center;gap:9px;font-size:.88rem;font-weight:600;}
+  .split-legend .name i{width:11px;height:11px;border-radius:3px;}
+  .split-legend .amt{font-family:var(--serif);font-weight:600;font-size:1rem;}
+
+  .disclaimer{max-width:1500px;margin:6px auto 0;padding:0 28px 24px;color:var(--ink-faint);font-size:.76rem;line-height:1.6;}
+  .disclaimer strong{color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);}
+  .reveal{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .wbseg{display:inline-flex;border:1px solid var(--line);border-radius:11px;background:var(--card);
+    box-shadow:var(--shadow);overflow:hidden;max-width:100%;}
+  .wbseg button{border:none;background:transparent;padding:10px 15px;font-family:var(--sans);
+    font-weight:600;font-size:.83rem;color:var(--ink-soft);cursor:pointer;transition:.15s;white-space:nowrap;
+    border-right:1px solid var(--line);display:inline-flex;align-items:center;gap:7px;}
+  .wbseg button:last-child{border-right:none;}
+  .wbseg button:hover{background:rgba(20,84,59,.06);}
+  .wbseg button.on{background:var(--forest);color:#fff;}
+  @media (max-width:860px){
+    .wbseg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .wbseg button{padding:10px 12px;font-size:.78rem;}
+  }
+  .pane{display:none;}
+  .pane.on{display:block;animation:rise .45s cubic-bezier(.2,.7,.2,1) both;}
+  .pane-intro{max-width:78ch;color:var(--ink-soft);font-size:.88rem;margin:-4px 0 16px;}
+  .pane-intro b{color:var(--ink);font-weight:600;}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;}
+  .g12{display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:start;}
+  @media (max-width:980px){ .g2,.g3,.g12{grid-template-columns:1fr;} }
+
+  /* ---------- compact output tiles ---------- */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .tiles.t2{grid-template-columns:repeat(2,1fr);}
+  @media (max-width:520px){ .tiles.t2{grid-template-columns:1fr;} }
+  .tile{background:var(--paper-2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;position:relative;}
+  .tile .tk{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-faint);font-weight:700;}
+  .tile .tv{font-family:var(--serif);font-weight:600;font-size:1.32rem;margin-top:3px;line-height:1.1;
+    letter-spacing:-.01em;white-space:nowrap;}
+  .tile .ts{font-size:.71rem;color:var(--ink-faint);margin-top:2px;}
+  .tile.hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);border-color:var(--forest-deep);}
+  .tile.hero .tk{color:var(--brass-soft);}
+  .tile.hero .tv,.tile.hero .ts{color:#f4f0e6;}
+  .tile.brass .tv{color:#8a6517;}
+  .tile.good .tv{color:var(--good);}
+  .tile.bad .tv{color:var(--bad);}
+
+  /* ---------- status chip (On track / Behind / Gap) ---------- */
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;
+    font-size:.79rem;font-weight:700;letter-spacing:.01em;}
+  .chip.good{background:rgba(47,125,84,.13);color:var(--good);}
+  .chip.warn{background:rgba(194,144,31,.16);color:#8a6517;}
+  .chip.bad{background:rgba(188,79,44,.13);color:var(--bad);}
+  .chip .ci{font-size:.9rem;}
+
+  /* ---------- strategy compare (goal planner) ---------- */
+  .modeseg.sm button{padding:7px 13px;font-size:.78rem;}
+  .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin-top:12px;}
+  .vs .side{border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--paper-2);position:relative;}
+  .vs .side.win{border-color:var(--forest);background:rgba(20,84,59,.07);box-shadow:0 0 0 2px rgba(20,84,59,.09);}
+  .vs .side .sk{font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-faint);font-weight:700;}
+  .vs .side .sv{font-family:var(--serif);font-size:1.18rem;font-weight:600;margin-top:2px;white-space:nowrap;}
+  .vs .side .sx{font-size:.72rem;color:var(--ink-soft);margin-top:4px;}
+  .vs .mid{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;
+    color:var(--ink-faint);text-transform:uppercase;letter-spacing:.1em;}
+  @media (max-width:560px){ .vs{grid-template-columns:1fr;} .vs .mid{padding:2px 0;} }
+  .winbadge{position:absolute;top:-9px;right:9px;background:var(--forest);color:#fff;font-size:.6rem;
+    font-weight:700;text-transform:uppercase;letter-spacing:.11em;padding:3px 8px;border-radius:999px;}
+
+  /* ---------- scenarios ---------- */
+  .scen-card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .scen-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sc,var(--forest));}
+  .scen-head{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:9px;}
+  .scen-name{display:inline-flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:600;font-size:1.02rem;}
+  .scen-dot{width:11px;height:11px;border-radius:3px;background:var(--sc,var(--forest));flex:none;}
+  .scen-card.off{opacity:.45;}
+  .scen-card.off .ctrl,.scen-card.off .scen-out{pointer-events:none;filter:grayscale(.5);}
+  .scen-out{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);}
+  .scen-out .so{min-width:0;}
+  .scen-out .sok{font-size:.64rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);font-weight:700;}
+  .scen-out .sov{font-family:var(--serif);font-weight:600;font-size:1.02rem;white-space:nowrap;margin-top:1px;}
+  .scen-out .so.full{grid-column:1/-1;}
+  .best-badge{display:inline-flex;align-items:center;gap:5px;background:var(--brass);color:#fff;
+    font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:999px;}
+  .scen-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:.7rem;
+    font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);}
+  .scen-toggle input{accent-color:var(--forest);width:15px;height:15px;cursor:pointer;}
+
+  /* comparison table */
+  .cmp-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:11px;margin-top:14px;}
+  table.cmp{width:100%;border-collapse:separate;border-spacing:0;font-size:.85rem;min-width:520px;}
+  table.cmp th{background:var(--paper-2);text-align:right;font-size:.66rem;text-transform:uppercase;
+    letter-spacing:.11em;color:var(--ink-faint);font-weight:700;padding:9px 13px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.cmp th:first-child{text-align:left;}
+  table.cmp td{padding:9px 13px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;
+    border-bottom:1px solid rgba(217,210,194,.55);}
+  table.cmp td:first-child{text-align:left;font-weight:600;}
+  table.cmp tr:last-child td{border-bottom:none;}
+  table.cmp td .swatch{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:7px;vertical-align:-1px;}
+
+  /* ---------- monte carlo ---------- */
+  .mc-run{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px;}
+  .mc-status{font-size:.76rem;color:var(--ink-faint);}
+  .mc-headline{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);color:#f4f0e6;
+    border-radius:13px;padding:18px 20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;margin-bottom:14px;}
+  .mc-headline::after{content:"";position:absolute;right:-40px;top:-50px;width:190px;height:190px;border-radius:50%;
+    background:radial-gradient(circle,rgba(199,154,63,.38),transparent 70%);}
+  .mc-headline .mk{font-size:.68rem;text-transform:uppercase;letter-spacing:.15em;color:var(--brass-soft);font-weight:700;}
+  .mc-headline .mv{font-family:var(--serif);font-weight:600;font-size:1.55rem;line-height:1.2;margin-top:7px;position:relative;z-index:1;}
+  .mc-headline .mv b{color:var(--brass-soft);font-weight:600;}
+  .mc-bar{height:9px;border-radius:999px;background:rgba(255,255,255,.16);margin-top:13px;overflow:hidden;position:relative;z-index:1;}
+  .mc-bar i{display:block;height:100%;border-radius:999px;background:var(--brass-soft);transition:width .4s;}
+  .pctl-legend{display:flex;gap:16px;flex-wrap:wrap;margin:2px 0 10px;font-size:.75rem;color:var(--ink-soft);}
+  .pctl-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .pctl-legend i{width:14px;height:10px;border-radius:2px;display:inline-block;}
+  .pctl-legend i.ln{height:0;border-top:2px dashed currentColor;border-radius:0;}
+  .empty-note{padding:26px 16px;text-align:center;color:var(--ink-faint);font-size:.84rem;}
+
+  .src-note{display:flex;align-items:flex-start;gap:8px;margin-top:11px;padding:9px 11px;border-radius:9px;
+    background:rgba(20,84,59,.055);border:1px dashed rgba(20,84,59,.22);font-size:.76rem;color:var(--ink-soft);line-height:1.5;}
+  .src-note b{color:var(--forest);font-weight:700;}
+  .act-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px dashed var(--line);align-items:center;}
+
+  /* =========================================================
+     DESIGN SYSTEM v2 — presentation only, no logic touched.
+     A 4px spacing scale and a 1.25 type scale replace the ad-hoc
+     values above; later rules of equal specificity win, so this
+     block re-bases the existing components without rewriting them.
+     ========================================================= */
+  :root{
+    --s1:4px;  --s2:8px;  --s3:12px; --s4:16px;
+    --s5:20px; --s6:24px; --s7:32px; --s8:44px;
+    --t-micro:.69rem;   /* overlines            */
+    --t-cap:.8rem;      /* hints, captions      */
+    --t-body:.925rem;   /* labels, body         */
+    --t-h3:1.05rem;     /* card titles          */
+    --t-h2:1.35rem;     /* section titles       */
+    --num-s:1.3rem; --num-m:1.75rem; --num-l:2.4rem; --num-xl:3.1rem;
+    --r-sm:9px; --r-md:13px; --r-lg:17px;
+    --ring:0 0 0 3px rgba(20,84,59,.13);
+  }
+
+  /* ---------- rhythm ---------- */
+  .rule{padding:0 var(--s6);margin-top:var(--s3);}
+  main{padding:var(--s5) var(--s6) var(--s7);}
+  h1{font-size:clamp(1.55rem,2.4vw,2.05rem);letter-spacing:-.02em;}
+  .kicker{font-size:var(--t-micro);letter-spacing:.3em;}
+
+  /* ---------- one card system ---------- */
+  .panel,.stat,.scen-card{border-radius:var(--r-md);}
+  .panel{padding:var(--s5) var(--s6);}
+  .panel h2{font-size:var(--t-h3);margin:0 0 var(--s4);letter-spacing:-.005em;}
+  .panel .sub{font-size:var(--t-cap);margin:0 0 var(--s4);}
+  .section-split{margin:var(--s5) calc(var(--s6) * -1) var(--s4);}
+
+  /* ---------- section headers ---------- */
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;
+    gap:var(--s4);flex-wrap:wrap;margin:var(--s7) 0 var(--s4);}
+  .sec-head:first-child{margin-top:0;}
+  .sec-title{font-family:var(--serif);font-weight:600;font-size:var(--t-h2);
+    letter-spacing:-.015em;margin:0;line-height:1.2;}
+  .sec-sub{font-size:var(--t-cap);color:var(--ink-faint);margin:2px 0 0;max-width:62ch;}
+
+  /* ---------- controls: calmer rows, bigger touch targets ---------- */
+  .ctrl{margin-bottom:var(--s4);}
+  .ctrl .row{margin-bottom:var(--s1);gap:var(--s3);}
+  .ctrl label{font-size:var(--t-body);line-height:1.3;}
+  .ctrl .hint{display:block;font-size:var(--t-cap);font-weight:400;margin-top:1px;}
+  .valuebox{border-radius:var(--r-sm);padding:var(--s2) var(--s3);flex:none;}
+  .valuebox:focus-within{box-shadow:var(--ring);}
+  .valuebox input{font-size:1rem;width:104px;}
+  .valuebox.pct input{width:56px;} .valuebox.yr input{width:46px;}
+  /* Track stays 6px but the hit area is tall — the gradient is painted as a
+     centred 6px band instead of filling the element. */
+  input[type=range]{
+    height:34px;margin:0;background-repeat:no-repeat;
+    background-position:center;background-size:100% 6px;
+  }
+  input[type=range]::-webkit-slider-thumb{width:22px;height:22px;border-width:2.5px;}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-width:2.5px;}
+  input[type=range]:focus-visible{box-shadow:var(--ring);border-radius:999px;}
+  .scalemarks{margin-top:-2px;font-size:var(--t-micro);}
+  @media (pointer:coarse){
+    input[type=range]{height:var(--s8);}
+    input[type=range]::-webkit-slider-thumb{width:26px;height:26px;}
+    input[type=range]::-moz-range-thumb{width:26px;height:26px;}
+    .valuebox input{font-size:1.05rem;}
+  }
+
+  /* ---------- collapsible advanced ---------- */
+  details.adv{margin-top:var(--s3);border-top:1px dashed var(--line);padding-top:var(--s3);}
+  details.adv > summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;gap:var(--s2);
+    font-size:var(--t-cap);font-weight:700;color:var(--ink-soft);
+    text-transform:uppercase;letter-spacing:.09em;padding:var(--s1) 0;
+    border-radius:var(--r-sm);transition:color .15s;
+  }
+  details.adv > summary::-webkit-details-marker{display:none;}
+  details.adv > summary:hover{color:var(--forest);}
+  details.adv > summary::before{
+    content:"";width:0;height:0;border-left:5px solid currentColor;
+    border-top:4px solid transparent;border-bottom:4px solid transparent;
+    transition:transform .18s;flex:none;
+  }
+  details.adv[open] > summary::before{transform:rotate(90deg);}
+  details.adv > summary .cnt{margin-left:auto;font-weight:600;color:var(--ink-faint);
+    letter-spacing:0;text-transform:none;font-size:var(--t-cap);}
+  details.adv .adv-body{padding-top:var(--s4);}
+
+  /* ---------- HERO: the 10-second answer ---------- */
+  .hero{
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);
+    color:#f4f0e6;border-radius:var(--r-lg);padding:var(--s6);
+    box-shadow:var(--shadow-lg);position:relative;overflow:hidden;margin-bottom:var(--s5);
+  }
+  .hero::after{content:"";position:absolute;right:-70px;top:-90px;width:320px;height:320px;
+    border-radius:50%;background:radial-gradient(circle,rgba(199,154,63,.30),transparent 68%);}
+  .hero-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:var(--s6);
+    position:relative;z-index:1;align-items:end;}
+  .hero-item{min-width:0;}
+  .hero-item + .hero-item{border-left:1px solid rgba(255,255,255,.14);padding-left:var(--s6);}
+  .hk{font-size:var(--t-micro);text-transform:uppercase;letter-spacing:.15em;
+    color:var(--brass-soft);font-weight:700;}
+  .hv{font-family:var(--serif);font-weight:600;line-height:1.02;letter-spacing:-.02em;
+    margin-top:var(--s2);white-space:nowrap;font-size:var(--num-m);}
+  .hero-item.primary .hv{font-size:var(--num-xl);}
+  .hs{font-size:var(--t-cap);color:#c3cfc2;margin-top:var(--s2);}
+  .hero-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--s5);
+    flex-wrap:wrap;margin-top:var(--s5);padding-top:var(--s4);
+    border-top:1px solid rgba(255,255,255,.14);position:relative;z-index:1;}
+  .hero-insight{font-size:var(--t-body);color:#e3e9e2;line-height:1.5;max-width:70ch;}
+  .hero-insight b{color:#fff;font-weight:700;}
+  .hero-insight .warn-ico{color:#f0b89e;}
+  .hero .toggle{display:flex;border:1px solid rgba(255,255,255,.22);border-radius:var(--r-sm);
+    overflow:hidden;background:rgba(0,0,0,.16);flex:none;}
+  .hero .toggle button{border:none;background:transparent;padding:var(--s2) var(--s4);
+    font-family:var(--sans);font-weight:600;font-size:var(--t-cap);color:#cdd6cc;cursor:pointer;transition:.15s;}
+  .hero .toggle button:hover{color:#fff;}
+  .hero .toggle button.on{background:var(--brass);color:#fff;}
+  .hero .view-note{color:#b9c6b8;font-size:var(--t-micro);text-align:left;max-width:none;}
+  .hero .view-note.warn{color:var(--brass-soft);}
+  @media (max-width:1080px){
+    .hero-grid{grid-template-columns:1fr 1fr;gap:var(--s5);}
+    .hero-item.primary{grid-column:1/-1;}
+    .hero-item.primary + .hero-item{border-left:none;padding-left:0;
+      border-top:1px solid rgba(255,255,255,.14);padding-top:var(--s4);}
+  }
+  @media (max-width:560px){
+    .hero{padding:var(--s5);}
+    .hero-grid{grid-template-columns:1fr;gap:var(--s4);}
+    .hero-item + .hero-item{border-left:none;padding-left:0;
+      border-top:1px solid rgba(255,255,255,.14);padding-top:var(--s4);}
+    .hero-item.primary .hv{font-size:2.4rem;}
+    .hero-foot{flex-direction:column;align-items:stretch;}
+    .hero .toggle button{flex:1;text-align:center;}
+  }
+
+  /* ---------- stat cards ---------- */
+  .stat-grid{gap:var(--s4);margin:0;}
+  .stat{padding:var(--s4) var(--s5);border-radius:var(--r-md);}
+  .stat .k{font-size:var(--t-micro);letter-spacing:.13em;}
+  .stat .v{font-size:var(--num-s);margin-top:var(--s1);}
+  .stat .real{font-size:var(--t-cap);margin-top:var(--s1);}
+
+  /* ---------- results blocks ---------- */
+  .results{margin-top:0;}
+  /* Equal-height input panels, with each Advanced drawer pinned to the bottom
+     so the two cards line up along their base as well as their top. */
+  .inputs-row{align-items:stretch;}
+  .inputs-row > .panel{display:flex;flex-direction:column;}
+  .inputs-row > .panel > .phase-tag{align-self:flex-start;}   /* chip, not a bar */
+  .inputs-row > .panel > details.adv{margin-top:auto;}
+  /* the withdrawal panel holds one control fewer, so let its rows breathe
+     into the leftover height instead of leaving a gap at the bottom */
+  .inputs-row > .panel > .swp-block{display:flex;flex-direction:column;flex:1;
+    justify-content:space-between;}
+  .result-duo{gap:var(--s5);margin-top:var(--s5);}
+  /* One dark focal point per screen — that's the hero. The drawdown card drops
+     to a light surface with a brass rule so it supports rather than competes. */
+  .feature-card{
+    padding:var(--s6);border-radius:var(--r-md);margin-top:0;
+    background:var(--card);color:var(--ink);border:1px solid var(--line);
+    border-top:3px solid var(--brass);box-shadow:var(--shadow);
+  }
+  .feature-card::after{display:none;}
+  .feature-card .lab{font-size:var(--t-micro);letter-spacing:.15em;color:#8a6517;}
+  .feature-card .big{font-size:var(--num-m);margin:var(--s2) 0 var(--s1);color:var(--ink);}
+  .feature-card .small{font-size:var(--t-cap);color:var(--ink-faint);}
+  .feature-card .pills{gap:var(--s3);margin-top:var(--s5);}
+  .feature-card .pill{padding:var(--s3) var(--s4);border-radius:var(--r-sm);
+    background:var(--paper-2);border:1px solid var(--line);}
+  .feature-card .pill .pk{font-size:var(--t-micro);color:var(--ink-faint);}
+  .feature-card .pill .pv{font-size:var(--t-h3);margin-top:var(--s1);color:var(--forest);}
+
+  .advice-head{margin-bottom:var(--s4);}
+  .advice-head .ah-title{font-size:var(--t-h3);}
+  .band-track{height:38px;border-radius:var(--r-sm);}
+  .band-legend{margin-top:var(--s3);font-size:var(--t-cap);}
+  .band-note{margin-top:var(--s3);font-size:var(--t-cap);}
+  .verdict{margin-top:var(--s4);padding:var(--s3) var(--s4);border-radius:var(--r-sm);font-size:var(--t-body);}
+  .suggest-row{margin-top:var(--s4);padding-top:var(--s4);}
+  .suggest-row .lab{font-size:var(--t-cap);}
+  .suggest-row .val{font-size:var(--t-h3);}
+
+  /* ---------- buttons ---------- */
+  .btn{border-radius:var(--r-sm);padding:var(--s3) var(--s5);font-size:var(--t-cap);
+    min-height:40px;display:inline-flex;align-items:center;justify-content:center;}
+  .btn:focus-visible{outline:none;box-shadow:var(--ring);}
+  @media (pointer:coarse){ .btn{min-height:var(--s8);} }
+
+  /* ---------- charts ---------- */
+  .chart-card .legend{margin:0 0 var(--s4);font-size:var(--t-cap);gap:var(--s5);}
+  .chart-wrap{height:340px;}
+  .charts-row{gap:var(--s5);margin-top:var(--s5);}
+  .donut-wrap{width:190px;height:190px;}
+  .split-legend .li{padding:var(--s3) 0;}
+  .split-legend .name{font-size:var(--t-body);}
+  /* the caption must fit inside the ring's hole, not spill across the arc */
+  .donut-center .dc-k{font-size:.6rem;letter-spacing:.07em;line-height:1.25;max-width:104px;}
+  .donut-center .dc-v{font-size:1.5rem;margin-top:2px;}
+
+  /* ---------- schedule ---------- */
+  .schedule-card{margin-top:var(--s5);}
+  .sched-scroll{max-height:380px;border-radius:var(--r-md);}
+  table.sched th{padding:var(--s3) var(--s4);font-size:var(--t-micro);}
+  table.sched td{padding:var(--s2) var(--s4);}
+  table.sched tfoot td{padding:var(--s3) var(--s4);}
+  .wbseg button{padding:var(--s3) var(--s5);font-size:var(--t-cap);min-height:42px;}
+  .modebar{margin-bottom:var(--s5);gap:var(--s4);}
+  .modeseg button{padding:var(--s2) var(--s5);font-size:var(--t-cap);min-height:38px;}
+  .modehint{font-size:var(--t-cap);}
+  .pane-intro{font-size:var(--t-body);margin:0 0 var(--s5);}
+  .tile{padding:var(--s4) var(--s5);border-radius:var(--r-md);}
+  .tile .tk{font-size:var(--t-micro);}
+  .tile .tv{font-size:var(--num-s);margin-top:var(--s1);}
+  .tile .ts{font-size:var(--t-cap);margin-top:var(--s1);}
+  .tiles{gap:var(--s4);}
+
+  /* ---------- mobile polish ---------- */
+  @media (max-width:760px){
+    .rule{padding:0 var(--s4);}
+    main{padding:var(--s4) var(--s4) var(--s6);}
+    .panel{padding:var(--s4);}
+    .section-split{margin:var(--s4) calc(var(--s4) * -1) var(--s3);}
+    .sec-head{margin:var(--s6) 0 var(--s3);}
+    .ctrl .row{flex-wrap:wrap;}
+    .ctrl label{flex:1 1 100%;}
+    .valuebox{width:100%;justify-content:flex-end;}
+    .valuebox input{width:auto;flex:1;min-width:0;}
+    .chart-wrap{height:280px;}
+    .modebar{flex-direction:column;align-items:stretch;}
+    .modeseg{width:100%;} .modeseg button{flex:1;}
+    .modehint{display:none;}
+    /* the drawer's contents-preview is helpful on desktop, clutter on a phone */
+    .swp-head{flex-wrap:wrap;}
+    .phase-tag{white-space:nowrap;}
+    .result-duo,.stat-grid{gap:var(--s3);}
+    .feature-card .pill{min-width:calc(50% - var(--s3));}
+  }
+
+  /* =========================================================
+     THEME v3 — the surface rebuild.
+     Cream paper + noise is replaced by a cool, crisp fintech
+     canvas: white cards, hairline borders, a dark app bar, and
+     tabular numerals. Brand hues (forest + brass) are unchanged.
+     ========================================================= */
+  :root{
+    --paper:#eceff0;          /* app canvas — cool, not cream   */
+    --paper-2:#f1f4f4;        /* input wells                    */
+    --card:#ffffff;           /* every card is white now        */
+    --ink:#0d1b16;
+    --ink-soft:#4a5751;
+    --ink-faint:#78867f;
+    --line:#dfe5e3;
+    --line-soft:#eaefed;
+    --shadow:0 1px 2px rgba(13,27,22,.04), 0 1px 3px rgba(13,27,22,.05);
+    --shadow-lg:0 4px 12px rgba(13,27,22,.07), 0 18px 40px -20px rgba(13,27,22,.22);
+    --r-sm:8px; --r-md:12px; --r-lg:14px;
+  }
+  body{
+    background-color:var(--paper);
+    background-image:none;                     /* the paper noise is gone */
+    color:var(--ink);
+  }
+  /* numbers read as data, not as prose */
+  .hv,.stat .v,.tile .tv,.feature-card .big,.sov,.dc-v,.mc-headline .mv,
+  table.sched td,table.sched tfoot td,table.cmp td,.suggest-row .val,
+  .vs .side .sv,.heads .v,.valuebox input{
+    font-variant-numeric:tabular-nums;
+    font-feature-settings:"tnum" 1,"ss01" 1;
+  }
+
+  /* ---------- app bar ---------- */
+  .appbar{
+    background:linear-gradient(180deg,#123f2d 0%,#0d3323 100%);
+    border-bottom:1px solid rgba(255,255,255,.07);
+    position:sticky;top:0;z-index:40;
+    box-shadow:0 1px 0 rgba(13,27,22,.06), 0 8px 24px -18px rgba(13,27,22,.5);
+  }
+  .appbar-inner{
+    max-width:1500px;margin:0 auto;padding:0 var(--s6);
+    display:flex;align-items:center;gap:var(--s7);min-height:60px;
+  }
+  .brand{display:inline-flex;align-items:center;gap:var(--s3);text-decoration:none;flex:none;}
+  .brand-mark{
+    width:32px;height:32px;border-radius:9px;flex:none;
+    background:linear-gradient(140deg,var(--brass) 0%,#9c7322 100%);
+    color:#fff;font-family:var(--serif);font-weight:600;font-size:1.05rem;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(184,138,46,.4);
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.1;}
+  .brand-kick{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--brass-soft);font-weight:700;}
+  .brand-name{font-family:var(--serif);font-size:1.02rem;font-weight:600;color:#fff;
+    letter-spacing:-.01em;margin:0;line-height:1.1;}
+  .scen-toggle input{width:18px;height:18px;}
+  .appbar .wbseg{
+    display:flex;background:transparent;border:none;box-shadow:none;
+    border-radius:0;overflow:visible;gap:var(--s1);margin:0;
+  }
+  .appbar .wbseg button{
+    border:none;background:transparent;border-right:none;
+    padding:0 var(--s4);height:60px;min-height:0;
+    font-size:.845rem;font-weight:600;color:#9db3a8;
+    position:relative;transition:color .16s;
+  }
+  .appbar .wbseg button:hover{background:transparent;color:#e6efe9;}
+  .appbar .wbseg button.on{background:transparent;color:#fff;}
+  .appbar .wbseg button.on::after{
+    content:"";position:absolute;left:var(--s3);right:var(--s3);bottom:0;
+    height:3px;border-radius:3px 3px 0 0;background:var(--brass);
+  }
+  @media (max-width:900px){
+    .appbar-inner{gap:var(--s4);padding:0 var(--s4);flex-wrap:nowrap;}
+    .brand-text{display:none;}
+    .appbar .wbseg{overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;
+      scrollbar-width:none;}
+    .appbar .wbseg::-webkit-scrollbar{display:none;}
+    .appbar .wbseg button{padding:0 var(--s3);font-size:.8rem;white-space:nowrap;}
+  }
+
+  /* ---------- cards: white, hairline, flat ---------- */
+  .panel,.stat,.scen-card,.chart-card,.sched-scroll,.cmp-scroll{
+    background:var(--card);border-color:var(--line);
+  }
+  .panel,.scen-card{box-shadow:var(--shadow);}
+  .stat{box-shadow:none;border:1px solid var(--line);}
+  .stat::before{display:none;}              /* no more coloured left bars */
+  .stat{border-top:3px solid var(--line);}
+  .stat.invested{border-top-color:#a9b5ae;}
+  .stat.returns{border-top-color:var(--brass);}
+  .stat.overall{border-top-color:var(--forest);}
+  .valuebox{background:var(--paper-2);border-color:var(--line);}
+  .phase-tag{border-radius:7px;font-size:.66rem;}
+  .phase-tag.accum{background:rgba(20,84,59,.09);}
+  input[type=range]{
+    background-image:linear-gradient(90deg,var(--forest) 0%,var(--forest) var(--fill,40%),
+      #dfe5e3 var(--fill,40%),#dfe5e3 100%);
+  }
+
+  /* ---------- section headers ---------- */
+  .sec-head{margin:var(--s7) 0 var(--s4);padding-bottom:var(--s3);
+    border-bottom:1px solid var(--line);align-items:flex-end;}
+  .sec-title{font-size:1.28rem;}
+  .sec-title::before{
+    content:"";display:inline-block;width:4px;height:17px;border-radius:2px;
+    background:var(--brass);margin-right:10px;vertical-align:-2px;
+  }
+
+  /* ---------- mode switch as a pill row ---------- */
+  .modeseg{border-radius:10px;background:var(--paper-2);border-color:var(--line);box-shadow:none;padding:3px;}
+  .modeseg button{border-radius:7px;}
+  .modeseg button.on{box-shadow:0 1px 3px rgba(13,27,22,.16);}
+
+  /* ---------- hero, restyled for the new canvas ---------- */
+  .hero{
+    background:linear-gradient(135deg,#123f2d 0%,#0b2c1e 100%);
+    border-radius:var(--r-lg);margin:var(--s5) 0 0;
+    box-shadow:var(--shadow-lg);
+  }
+  .hero::after{right:-90px;top:-110px;width:360px;height:360px;
+    background:radial-gradient(circle,rgba(199,154,63,.26),transparent 66%);}
+  .hs{color:#a9bdb2;}
+  .hero-insight{color:#dce6e0;}
+
+  /* ---------- tables ---------- */
+  table.sched th,table.cmp th{background:#f6f8f8;color:var(--ink-faint);
+    border-bottom:1px solid var(--line);}
+  table.sched td{border-bottom:1px solid var(--line-soft);}
+  table.sched tbody tr:nth-child(even) td{background:#fafbfb;}
+  table.sched tfoot td{background:#f6f8f8;}
+
+  /* ---------- goal-based investment ---------- */
+  /* pooled-savings control strip */
+  .fund-bar{
+    display:flex;gap:var(--s5);align-items:flex-end;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--forest);
+    border-radius:var(--r-md);box-shadow:var(--shadow);padding:var(--s4) var(--s5);margin-bottom:var(--s4);
+  }
+  .fund-col{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .fund-col .fl{font-size:var(--t-micro);font-weight:700;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--ink-faint);}
+  .fund-col .valuebox{min-height:40px;}
+  .fund-note{flex:1;min-width:190px;justify-content:flex-end;font-size:var(--t-cap);
+    color:var(--ink-soft);line-height:1.5;text-align:right;}
+  .fund-note b{color:var(--forest);font-weight:700;}
+  .fund-note .spare{color:#8a6517;}
+  @media (max-width:760px){
+    .fund-bar{flex-direction:column;align-items:stretch;gap:var(--s4);}
+    .fund-note{text-align:left;}
+    .fund-col .modeseg,.fund-col .mini-select,.fund-col .valuebox{width:100%;}
+    .fund-col .modeseg button{flex:1;}
+  }
+  /* read-only allocation cell (pooled mode) */
+  .alloc{display:inline-flex;flex-direction:column;align-items:flex-end;gap:1px;padding:5px 8px;}
+  .alloc .av{font-weight:700;font-size:.95rem;font-variant-numeric:tabular-nums;color:var(--ink);}
+  .alloc .ap{font-size:var(--t-micro);color:var(--ink-faint);font-weight:600;}
+  .alloc.none .av{color:var(--ink-faint);font-weight:600;}
+
+  .goal-add{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap;}
+  .mini-select{
+    font-family:var(--sans);font-size:var(--t-cap);font-weight:600;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:var(--s2) var(--s3);min-height:40px;cursor:pointer;outline:none;
+  }
+  .mini-select:focus-visible{box-shadow:var(--ring);border-color:var(--forest);}
+  /* A planning sheet: goals down the rows, fields across the columns, so any
+     one field can be compared by scanning a single column. */
+  .goal-sheet{
+    overflow-x:auto;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r-md);box-shadow:var(--shadow);
+  }
+  table.goals{width:100%;border-collapse:separate;border-spacing:0;min-width:940px;}
+  table.goals th{
+    background:#f6f8f8;text-align:right;padding:var(--s3) var(--s4);white-space:nowrap;
+    font-size:var(--t-micro);font-weight:700;text-transform:uppercase;letter-spacing:.09em;
+    color:var(--ink-faint);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2;
+  }
+  table.goals th.c-name{text-align:left;}
+  table.goals th.sortable{cursor:pointer;user-select:none;}
+  table.goals th.sortable:hover{color:var(--forest);}
+  table.goals th.sortable::after{content:"⇅";margin-left:5px;opacity:.35;font-size:.85em;}
+  table.goals th.sortable.asc::after{content:"↑";opacity:1;color:var(--forest);}
+  table.goals th.sortable.desc::after{content:"↓";opacity:1;color:var(--forest);}
+  table.goals th.calc{background:#eef3f0;color:#4a6b5b;}
+  table.goals td{
+    padding:var(--s2) var(--s3);border-bottom:1px solid var(--line-soft);
+    text-align:right;white-space:nowrap;vertical-align:middle;
+  }
+  table.goals tbody tr:hover td{background:rgba(20,84,59,.035);}
+  table.goals td.c-name{text-align:left;padding-left:var(--s4);}
+  /* computed columns are visibly not-editable */
+  table.goals td.calc{
+    background:#f7faf8;font-variant-numeric:tabular-nums;font-weight:700;
+    font-family:var(--serif);font-size:1.02rem;
+  }
+  table.goals tbody tr:hover td.calc{background:#eff6f2;}
+  table.goals td.calc.cost{color:#8a6517;}
+  table.goals td.calc.sip{color:var(--forest);}
+  table.goals td.calc.lump{color:var(--ink-soft);font-weight:600;font-size:.95rem;}
+  table.goals td.funded{color:var(--good);}
+  .goal-dot{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:9px;
+    vertical-align:0;background:var(--gc,var(--forest));flex:none;}
+  .goal-name{
+    width:100%;max-width:230px;font-family:var(--serif);font-weight:600;font-size:1rem;
+    color:var(--ink);background:transparent;border:1px solid transparent;border-radius:6px;
+    padding:5px 7px;outline:none;letter-spacing:-.005em;transition:.14s;
+  }
+  .goal-name:hover{border-color:var(--line);background:var(--paper-2);}
+  .goal-name:focus{border-color:var(--forest);background:#fff;box-shadow:var(--ring);}
+  /* spreadsheet-style cells: chrome only on hover/focus */
+  .cellbox{
+    display:inline-flex;align-items:center;gap:3px;justify-content:flex-end;
+    border:1px solid transparent;border-radius:7px;padding:5px 8px;transition:.14s;
+    background:transparent;
+  }
+  .cellbox:hover{border-color:var(--line);background:var(--paper-2);}
+  .cellbox:focus-within{border-color:var(--forest);background:#fff;box-shadow:var(--ring);}
+  .cellbox .pre,.cellbox .suf{color:var(--ink-faint);font-size:.8rem;font-weight:600;}
+  .cellbox input{
+    border:none;background:transparent;font-family:var(--sans);font-weight:600;
+    font-size:.95rem;color:var(--ink);text-align:right;outline:none;
+    font-variant-numeric:tabular-nums;width:96px;
+  }
+  .cellbox.pct input{width:38px;} .cellbox.yr input{width:32px;}
+  .goal-del{
+    border:1px solid transparent;background:transparent;color:var(--ink-faint);
+    width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:1.05rem;line-height:1;transition:.15s;
+  }
+  tr:hover .goal-del{border-color:var(--line);}
+  .goal-del:hover{background:rgba(188,79,44,.1);color:var(--bad);border-color:rgba(188,79,44,.35);}
+  table.goals tfoot td{
+    background:#f6f8f8;border-top:1.5px solid var(--line);border-bottom:none;
+    padding:var(--s3) var(--s4);font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  table.goals tfoot td.c-name{text-transform:uppercase;letter-spacing:.09em;
+    font-size:var(--t-micro);color:var(--ink-faint);}
+  table.goals tfoot td.calc{font-family:var(--serif);font-size:1.08rem;}
+  .goal-empty{padding:var(--s7);text-align:center;color:var(--ink-faint);font-size:var(--t-body);}
+  .sheet-note{margin:var(--s3) 0 0;font-size:var(--t-cap);color:var(--ink-faint);}
+  .sheet-note b{color:var(--ink-soft);font-weight:700;}
+
+  /* Below 820px the same table reflows into one stacked block per goal —
+     one DOM, no duplicate card markup to keep in sync. */
+  @media (max-width:820px){
+    .goal-sheet{overflow-x:visible;background:transparent;border:none;box-shadow:none;}
+    table.goals{min-width:0;}
+    table.goals thead{display:none;}
+    table.goals tbody,table.goals tfoot,table.goals tr,table.goals td{display:block;width:auto;}
+    table.goals tbody tr{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+      box-shadow:var(--shadow);padding:var(--s3) var(--s4) var(--s4);margin-bottom:var(--s4);
+      border-top:3px solid var(--gc,var(--forest));
+    }
+    table.goals tbody tr:hover td{background:transparent;}
+    table.goals td{
+      display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+      padding:var(--s2) 0;border-bottom:1px solid var(--line-soft);text-align:right;
+    }
+    table.goals td::before{
+      content:attr(data-label);font-size:var(--t-micro);font-weight:700;
+      text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);
+      text-align:left;flex:none;
+    }
+    table.goals td.c-name{padding:0 0 var(--s2);border-bottom:1px solid var(--line);}
+    table.goals td.c-name::before{display:none;}
+    table.goals td.calc{background:transparent;border-radius:0;}
+    table.goals td.c-act{border-bottom:none;justify-content:flex-end;padding-top:var(--s3);}
+    table.goals td.c-act::before{content:"";}
+    .goal-name{max-width:none;flex:1;}
+    .cellbox{border-color:var(--line);background:var(--paper-2);min-height:40px;}
+    .cellbox input{width:110px;}
+    table.goals tfoot tr{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+      box-shadow:var(--shadow);padding:var(--s3) var(--s4);
+    }
+    table.goals tfoot td{background:transparent;border-top:none;
+      border-bottom:1px solid var(--line-soft);padding:var(--s2) 0;
+      display:flex;justify-content:space-between;gap:var(--s4);}
+    table.goals tfoot td::before{content:attr(data-label);font-size:var(--t-micro);
+      font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);}
+    table.goals tfoot td:last-child{border-bottom:none;}
+    .goal-del{border-color:var(--line);}
+  }
+
+  /* ---------- misc surfaces ---------- */
+  .tile{background:var(--paper-2);border-color:var(--line);}
+  .band-track{background:var(--paper-2);border-color:var(--line);}
+  .src-note{background:rgba(20,84,59,.05);border-color:rgba(20,84,59,.16);}
+  .feature-card{background:var(--card);border-color:var(--line);}
+  .feature-card .pill{background:var(--paper-2);border-color:var(--line);}
+  footer{border-top:1px solid var(--line);background:var(--card);}
+  .disclaimer{padding-top:var(--s5);}
+  main{padding-top:var(--s5);}
+
+  /* ---------- local access gate ---------- */
+  body:not(.is-unlocked) > :not(#access-gate){visibility:hidden;}
+  #access-gate{
+    position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;
+    background:radial-gradient(ellipse at 50% 0%,rgba(20,84,59,.10),transparent 55%),var(--paper);
+  }
+  body.is-unlocked #access-gate{display:none;}
+  .access-card{
+    width:min(100%,420px);padding:34px;background:var(--card);border:1px solid var(--line);
+    border-radius:18px;box-shadow:var(--shadow-lg);text-align:center;
+  }
+  .access-mark{
+    width:52px;height:52px;margin:0 auto 20px;border-radius:15px;display:grid;place-items:center;
+    background:linear-gradient(140deg,var(--brass),#9c7322);color:#fff;font:600 1.5rem var(--serif);
+    box-shadow:0 4px 12px rgba(184,138,46,.28);
+  }
+  .access-eyebrow{margin:0;color:var(--brass);font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;}
+  .access-card h2{margin:7px 0 8px;font:600 1.8rem/1.15 var(--serif);color:var(--ink);}
+  .access-copy{margin:0 0 22px;color:var(--ink-soft);font-size:.9rem;line-height:1.55;}
+  .access-field{display:block;margin-bottom:14px;text-align:left;color:var(--ink-soft);font-size:.77rem;font-weight:700;}
+  .access-field input{
+    display:block;width:100%;height:48px;margin-top:7px;padding:0 14px;border:1px solid var(--line);
+    border-radius:9px;background:var(--paper-2);color:var(--ink);font:600 1.1rem var(--sans);
+    letter-spacing:.18em;outline:none;
+  }
+  .access-field input:focus{border-color:var(--forest);box-shadow:var(--ring);}
+  .access-submit{width:100%;min-height:46px;border:0;border-radius:9px;background:var(--forest);
+    color:#fff;font:700 .92rem var(--sans);cursor:pointer;transition:background .15s;}
+  .access-submit:hover{background:var(--forest-deep);}
+  .access-submit:focus-visible{outline:none;box-shadow:var(--ring);}
+  .access-error{min-height:1.3em;margin:11px 0 0;color:var(--bad);font-size:.8rem;}
+  .access-foot{margin:17px 0 0;color:var(--ink-faint);font-size:.7rem;line-height:1.5;}
+  @media (max-width:480px){.access-card{padding:27px 22px;}}
+</style>
+</head>
+<body>
+
+<section id="access-gate" aria-labelledby="access-title">
+  <div class="access-card">
+    <div class="access-mark" aria-hidden="true">₹</div>
+    <p class="access-eyebrow">Navin's · Wealth Planner</p>
+    <h2 id="access-title">Enter your PIN</h2>
+    <p class="access-copy">Enter your PIN to open your wealth planner.</p>
+    <form id="access-form">
+      <label class="access-field" for="access-pin">PIN
+        <input id="access-pin" type="password" inputmode="numeric" autocomplete="off" pattern="[0-9]{4}" minlength="4" maxlength="4" required aria-describedby="access-error">
+      </label>
+      <button class="access-submit" type="submit">Unlock planner</button>
+      <p class="access-error" id="access-error" role="alert" aria-live="polite"></p>
+    </form>
+    <p class="access-foot">For sensitive financial information, use server-backed authentication. A PIN embedded in a local HTML file can be discovered by inspecting its source.</p>
+  </div>
+</section>
+
+<header class="appbar">
+  <div class="appbar-inner">
+    <a class="brand" href="#">
+      <span class="brand-mark">₹</span>
+      <span class="brand-text">
+        <span class="brand-kick">Navin's</span>
+        <h1 class="brand-name">Wealth Planner</h1>
+      </span>
+    </a>
+    <nav class="wbseg" id="wbSeg">
+      <button data-pane="calc" class="on">Calculator</button>
+      <button data-pane="goals">Goals</button>
+      <button data-pane="goal">Target Corpus</button>
+      <button data-pane="fire">Retirement</button>
+      <button data-pane="scen">Scenarios</button>
+      <button data-pane="mc">Monte Carlo</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="pane on" id="pane-calc">
+  <!-- ============ MODE ============ -->
+  <div class="modebar">
+    <div class="modeseg" id="modeSeg">
+      <button data-mode="sipswp" class="on">SIP &rarr; SWP</button>
+      <button data-mode="lumpsum">Lump sum &rarr; SWP</button>
+    </div>
+    <span class="modehint" id="modeHint">Build a corpus with monthly SIPs, then draw an income from it.</span>
+  </div>
+
+  <!-- ============ STEP 1 + 2 · all inputs, flat and visible ============ -->
+  <div class="sec-head">
+    <div>
+      <h2 class="sec-title">Your plan</h2>
+      <p class="sec-sub">Every assumption behind the projection. Change anything and the numbers below update instantly.</p>
+    </div>
+  </div>
+
+  <div class="inputs-row">
+  <section class="panel reveal" style="animation-delay:.1s">
+    <div class="phase-tag accum" id="accTag"><span class="dot"></span>Accumulation &middot; SIP</div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="holdings">Current holdings</label>
+        <div class="valuebox"><span class="pre">₹</span><input id="holdings" type="text" inputmode="numeric"></div>
+      </div>
+      <input type="range" id="holdings_r" aria-label="Current holdings" min="0" max="20000000" step="50000">
+      <div class="scalemarks"><span>₹0</span><span id="holdings_max_lbl">₹2 Cr</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="sip">Monthly SIP</label>
+        <div class="valuebox"><span class="pre">₹</span><input id="sip" type="text" inputmode="numeric"></div>
+      </div>
+      <input type="range" id="sip_r" aria-label="Monthly SIP" min="0" max="500000" step="500">
+      <div class="scalemarks"><span>₹0</span><span>₹5 L</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="sipstep">Annual SIP step-up <span class="hint">raise your SIP yearly</span></label>
+        <div class="valuebox pct"><input id="sipstep" type="text" inputmode="decimal"><span class="suf">%</span></div>
+      </div>
+      <input type="range" id="sipstep_r" aria-label="Annual SIP step-up" min="0" max="25" step="0.5">
+      <div class="scalemarks"><span>0%</span><span>25%</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="ret">Expected return <span class="hint">p.a., nominal</span></label>
+        <div class="valuebox pct"><input id="ret" type="text" inputmode="decimal"><span class="suf">%</span></div>
+        </div>
+      <input type="range" id="ret_r" aria-label="Expected return" min="1" max="30" step="0.5">
+      <div class="scalemarks"><span>1%</span><span>30%</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="acc">Accumulation period</label>
+        <div class="valuebox yr"><input id="acc" type="text" inputmode="numeric"><span class="suf">yrs</span></div>
+      </div>
+      <input type="range" id="acc_r" aria-label="Accumulation period" min="1" max="40" step="1">
+      <div class="scalemarks"><span>1 yr</span><span>40 yrs</span></div>
+    </div>
+  </section>
+
+  <section class="panel reveal" style="animation-delay:.13s">
+    <div class="swp-head">
+      <div class="phase-tag swp"><span class="dot"></span>Withdrawal &middot; SWP</div>
+      <label class="switch" id="swpSwitch" title="Include a withdrawal phase in the totals">
+        <input type="checkbox" id="swpToggle">
+        <span class="track"><span class="knob"></span></span>
+        <span class="switch-lbl">Include</span>
+      </label>
+    </div>
+    <p class="sub mini" id="swp_off_note" style="display:none;">Off — totals show the accumulated corpus only.</p>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="infl">Inflation assumption <span class="hint">also drives “today's value”</span></label>
+        <div class="valuebox pct"><input id="infl" type="text" inputmode="decimal"><span class="suf">%</span></div>
+      </div>
+      <input type="range" id="infl_r" aria-label="Inflation assumption" min="0" max="12" step="0.5">
+      <div class="scalemarks"><span>0%</span><span>12%</span></div>
+    </div>
+
+    <div id="swpBlock" class="swp-block">
+    <div class="ctrl">
+      <div class="row">
+        <label for="swpyears">SWP period</label>
+        <div class="valuebox yr"><input id="swpyears" type="text" inputmode="numeric"><span class="suf">yrs</span></div>
+      </div>
+      <input type="range" id="swpyears_r" aria-label="SWP period" min="1" max="45" step="1">
+      <div class="scalemarks"><span>1 yr</span><span>45 yrs</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="swpstep">Withdrawal step-up <span class="hint">to hold spending power</span></label>
+        <div class="valuebox pct"><input id="swpstep" type="text" inputmode="decimal"><span class="suf">%</span></div>
+      </div>
+      <input type="range" id="swpstep_r" aria-label="Withdrawal step-up" min="0" max="15" step="0.5">
+      <div class="scalemarks"><span>0%</span><span>15%</span></div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row">
+        <label for="swp">Monthly withdrawal <span class="hint">start of SWP</span></label>
+        <div class="valuebox"><span class="pre">₹</span><input id="swp" type="text" inputmode="numeric"></div>
+      </div>
+      <input type="range" id="swp_r" aria-label="Monthly withdrawal" class="band" min="0" max="500000" step="500">
+      <div class="scalemarks"><span>₹0</span><span id="swp_max_lbl">—</span></div>
+    </div>
+    </div><!-- /swpBlock -->
+  </section>
+  </div><!-- /inputs-row -->
+
+  <!-- ============ HERO · headline result, after the plan ============ -->
+  <section class="hero reveal" id="heroSummary">
+    <div class="hero-grid">
+      <div class="hero-item primary">
+        <div class="hk" id="h_corpus_k">Corpus at retirement</div>
+        <div class="hv" id="h_corpus">—</div>
+        <div class="hs" id="h_corpus_sub">—</div>
+      </div>
+      <div class="hero-item" id="h_income_item">
+        <div class="hk" id="h_income_k">Monthly income it supports</div>
+        <div class="hv" id="h_income">—</div>
+        <div class="hs" id="h_income_sub">—</div>
+      </div>
+      <div class="hero-item" id="h_left_item">
+        <div class="hk" id="h_left_k">Left at the end</div>
+        <div class="hv" id="h_left">—</div>
+        <div class="hs" id="h_left_sub">—</div>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <div>
+        <div class="hero-insight" id="h_insight">—</div>
+        <div class="view-note" id="view_note" style="margin-top:6px;"></div>
+      </div>
+      <div class="toggle" id="view_toggle">
+        <button data-view="nominal" class="on">Nominal ₹</button>
+        <button data-view="real">Today's value</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="results reveal" style="animation-delay:.16s">
+    <div class="sec-head">
+      <div>
+        <h2 class="sec-title">The detail</h2>
+        <p class="sec-sub">What you put in, what the market added, and what it leaves you.</p>
+      </div>
+    </div>
+
+    <!-- The three headline numbers -->
+    <div class="stat-grid">
+      <div class="stat invested">
+        <div class="k" id="invested_k">Total invested</div>
+        <div class="v" id="s_invested">—</div>
+        <div class="real" id="s_invested_sub">money you put in</div>
+      </div>
+      <div class="stat returns">
+        <div class="k" id="returns_k">Total returns</div>
+        <div class="v" id="s_returns">—</div>
+        <div class="real" id="s_returns_sub">wealth gained</div>
+      </div>
+      <div class="stat overall">
+        <div class="k" id="overall_k">Corpus at retirement</div>
+        <div class="v" id="s_overall">—</div>
+        <div class="real" id="s_overall_sub">total value</div>
+      </div>
+    </div>
+
+    <!-- Drawdown + advisory side by side -->
+    <div class="result-duo" id="resultDuo">
+    <div class="feature-card" id="drawdownCard">
+      <div class="lab">After your SWP</div>
+      <div class="big" id="f_ending" data-max="1.75" data-min="1.0">—</div>
+      <div class="small" id="f_ending_note">Corpus remaining when your SWP period ends</div>
+      <div class="pills">
+        <div class="pill"><div class="pk">Total withdrawn</div><div class="pv" id="f_withdrawn">—</div></div>
+        <div class="pill"><div class="pk">First monthly income</div><div class="pv" id="f_firstinc">—</div></div>
+        <div class="pill"><div class="pk">Last monthly income</div><div class="pv" id="f_lastinc">—</div></div>
+      </div>
+    </div>
+
+    <!-- Advisory band (output) -->
+    <div class="panel advice-panel" id="adviceWrap">
+      <div class="advice-head">
+        <span class="ah-title">Safe monthly withdrawal</span>
+        <span id="band_corpus"></span>
+      </div>
+      <div class="band-track" id="band_track">
+        <div class="band-zone sus" id="z_sus"></div>
+        <div class="band-zone mod" id="z_mod"></div>
+        <div class="band-zone agg" id="z_agg"></div>
+        <div class="band-pointer" id="band_ptr"></div>
+      </div>
+      <div class="band-legend">
+        <span><i style="background:rgba(47,125,84,.6)"></i>Safe &middot; up to 6%/yr</span>
+        <span><i style="background:rgba(194,144,31,.6)"></i>Lasts full horizon</span>
+        <span><i style="background:rgba(188,79,44,.6)"></i>Depletes early</span>
+      </div>
+      <div class="band-note" id="band_note"></div>
+      <div class="verdict" id="verdict"><span class="ico">●</span><span id="verdict_txt"></span></div>
+      <div class="suggest-row">
+        <div>
+          <div class="lab">Suggested starting withdrawal</div>
+          <div class="val" id="suggest_val">—</div>
+        </div>
+        <button class="btn" id="use_suggest">Use this</button>
+      </div>
+    </div>
+    </div><!-- /result-duo -->
+  </section>
+
+  <!-- ============ CHARTS (bottom) ============ -->
+  <div class="charts-row reveal" style="animation-delay:.2s">
+    <div class="panel chart-card">
+      <h2>Corpus over time</h2>
+      <div class="legend">
+        <span><i style="background:var(--forest)"></i>Corpus value</span>
+        <span><i style="background:var(--ink-faint)"></i>Invested</span>
+        <span><i style="background:var(--brass)"></i>Retirement</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="timeline" role="img" aria-label="Line chart: corpus value over time"></canvas>
+        <div id="tooltip"></div>
+      </div>
+    </div>
+
+    <div class="panel chart-card" id="donutCard">
+      <h2>Corpus make-up</h2>
+      <div class="split-row">
+        <div class="donut-wrap">
+          <canvas id="donut" role="img" aria-label="Donut chart: corpus make-up"></canvas>
+          <div class="donut-center">
+            <div class="dc-k">Return multiple</div>
+            <div class="dc-v" id="donut_ratio">—</div>
+          </div>
+        </div>
+        <div class="split-legend">
+          <div class="li"><div class="name"><i style="background:var(--ink-faint)"></i>Your contributions</div><div class="amt" id="sp_principal">—</div></div>
+          <div class="li"><div class="name"><i style="background:var(--brass)"></i>Returns / compounding</div><div class="amt" id="sp_gains">—</div></div>
+          <div class="li"><div class="name"><i style="background:var(--forest)"></i>Total corpus</div><div class="amt" id="sp_total">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ YEAR-BY-YEAR SWP SCHEDULE ============ -->
+  <section class="panel schedule-card reveal" id="scheduleCard" style="animation-delay:.18s">
+    <div class="sched-head">
+      <div>
+        <h2 style="margin:0;">Year-by-year withdrawal schedule</h2>
+        <p class="sub" style="margin:2px 0 0;" id="sched_sub"></p>
+      </div>
+      <div class="sched-actions">
+        <button class="btn ghost" id="sched_csv">Download CSV</button>
+        <button class="btn" id="sched_pdf">Download PDF</button>
+      </div>
+    </div>
+    <div class="sched-scroll">
+      <table class="sched">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Opening corpus</th>
+            <th>Monthly SWP</th>
+            <th>Withdrawn in year</th>
+            <th id="th_growth">Growth earned</th>
+            <th>Closing corpus</th>
+          </tr>
+        </thead>
+        <tbody id="sched_body"></tbody>
+        <tfoot id="sched_foot"></tfoot>
+      </table>
+    </div>
+    <p class="sched-note" id="sched_note"></p>
+  </section>
+  </div><!-- /pane-calc -->
+
+  <!-- ============================================================
+       PANE · GOAL-BASED INVESTMENT
+       ============================================================ -->
+  <div class="pane" id="pane-goals">
+    <p class="pane-intro">Every goal has its own price, its own deadline and its own inflation — a college fee rises far faster than a car does. Plan each one separately, then see what they cost you together, every month.</p>
+
+    <div class="tiles" id="goalsSummary">
+      <div class="tile hero"><div class="tk">Total monthly SIP needed</div><div class="tv" id="gs_sip">—</div><div class="ts" id="gs_sip_sub">across all goals</div></div>
+      <div class="tile"><div class="tk">Goals planned</div><div class="tv" id="gs_count">—</div><div class="ts" id="gs_count_sub">—</div></div>
+      <div class="tile brass"><div class="tk">Total cost at maturity</div><div class="tv" id="gs_future">—</div><div class="ts">after each goal's inflation</div></div>
+      <div class="tile"><div class="tk">Already funded</div><div class="tv" id="gs_funded">—</div><div class="ts" id="gs_funded_sub">from what you've saved</div></div>
+    </div>
+
+    <div class="verdict" id="goals_verdict" style="margin-top:var(--s4);"><span class="ico">●</span><span id="goals_verdict_txt"></span></div>
+
+    <div class="sec-head">
+      <div>
+        <h2 class="sec-title">Your goals</h2>
+        <p class="sec-sub">Enter what each goal costs <em>today</em> — the future price is worked out for you.</p>
+      </div>
+      <div class="goal-add">
+        <select id="goalPreset" class="mini-select" aria-label="Goal type to add"></select>
+        <button class="btn" id="goalAdd">+ Add goal</button>
+      </div>
+    </div>
+
+    <div class="fund-bar">
+      <div class="fund-col">
+        <span class="fl">How your savings are held</span>
+        <div class="modeseg sm" id="fundModeSeg">
+          <button data-fmode="pooled" class="on">One shared pool</button>
+          <button data-fmode="earmarked">Earmarked per goal</button>
+        </div>
+      </div>
+      <div class="fund-col" id="fundPoolWrap">
+        <label class="fl" for="fundPool">Total savings today</label>
+        <div class="valuebox"><span class="pre">₹</span><input id="fundPool" type="text" inputmode="numeric"></div>
+      </div>
+      <div class="fund-col" id="fundStratWrap">
+        <label class="fl" for="fundStrategy">Split it across goals by</label>
+        <select id="fundStrategy" class="mini-select">
+          <option value="nearest">Nearest goal first — lowest total SIP</option>
+          <option value="proportional">Proportionally — every goal part-funded</option>
+        </select>
+      </div>
+      <div class="fund-col fund-note" id="fundNote"></div>
+    </div>
+
+    <div class="goal-sheet">
+      <table class="goals" id="goalTable">
+        <thead>
+          <tr>
+            <th class="c-name">Goal</th>
+            <th class="sortable" data-sort="cost">Cost today</th>
+            <th class="sortable" data-sort="years">Years</th>
+            <th>Inflation</th>
+            <th>Return</th>
+            <th id="th_saved">Allocated</th>
+            <th class="calc sortable" data-sort="future">Cost when due</th>
+            <th class="calc sortable" data-sort="sip">Monthly SIP</th>
+            <th class="calc">Or lump sum today</th>
+            <th class="c-act" aria-label="Remove"></th>
+          </tr>
+        </thead>
+        <tbody id="goalBody"></tbody>
+        <tfoot id="goalFoot"></tfoot>
+      </table>
+    </div>
+    <p class="sheet-note">Shaded columns are calculated for you. Click <b>Cost when due</b>, <b>Monthly SIP</b>, <b>Years</b> or <b>Cost today</b> to sort.</p>
+
+    <div class="panel chart-card" style="margin-top:var(--s5);">
+      <div class="advice-head">
+        <span class="ah-title">When the money is needed</span>
+        <span id="goals_chart_note" style="font-size:.8rem;font-weight:600;color:var(--forest);"></span>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--forest)"></i>Already funded</span>
+        <span><i style="background:var(--brass)"></i>Still to invest</span>
+      </div>
+      <div class="chart-wrap" id="goalsChartWrap" style="height:300px;">
+        <canvas id="goalsChart" role="img" aria-label="Bar chart: when each goal needs funding"></canvas>
+        <div id="goalsTip" style="position:absolute;pointer-events:none;background:var(--ink);color:#f4f0e6;
+          border-radius:8px;padding:8px 10px;font-size:.74rem;line-height:1.55;opacity:0;transition:opacity .12s;
+          white-space:nowrap;box-shadow:var(--shadow);z-index:5;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANE · TARGET CORPUS PLANNER  (Feature 1)
+       ============================================================ -->
+  <div class="pane" id="pane-goal">
+    <p class="pane-intro">Work <b>backwards from a number</b>. Set the corpus you want and when you want it, and this solves for the monthly SIP that gets you there — as a flat commitment, or as a smaller one that steps up every year.</p>
+    <div class="g12">
+      <section class="panel">
+        <div class="phase-tag accum"><span class="dot"></span>Goal inputs</div>
+        <div id="goalCtrls"></div>
+        <div class="section-split"></div>
+        <div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px;">
+          <label style="font-size:.86rem;font-weight:600;">Strategy</label>
+          <div class="modeseg sm" id="goalModeSeg">
+            <button data-gmode="fixed" class="on">Fixed SIP</button>
+            <button data-gmode="step">With step-up</button>
+          </div>
+        </div>
+        <div id="goalStepCtrl"></div>
+        <label class="scen-toggle" style="margin-top:10px;">
+          <input type="checkbox" id="goalOffset" checked>
+          <span id="goalOffsetLbl">Count my current holdings</span>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div class="advice-head">
+          <span class="ah-title">What it takes</span>
+          <span id="goal_basis" style="font-size:.8rem;font-weight:600;color:var(--forest);"></span>
+        </div>
+        <div class="tiles">
+          <div class="tile hero"><div class="tk">Required monthly SIP</div><div class="tv" id="g_sip">—</div><div class="ts" id="g_sip_sub">to start with</div></div>
+          <div class="tile brass"><div class="tk">Annual step-up</div><div class="tv" id="g_step">—</div><div class="ts">applied each year</div></div>
+          <div class="tile"><div class="tk">Total investment</div><div class="tv" id="g_total">—</div><div class="ts">money you put in</div></div>
+        </div>
+
+        <h2 style="font-size:1rem;margin:18px 0 0;">Which strategy is more capital efficient?</h2>
+        <div class="vs" id="goal_vs">
+          <div class="side" id="vs_fixed">
+            <div class="sk">Fixed SIP</div>
+            <div class="sv" id="vsf_sip">—</div>
+            <div class="sx" id="vsf_total">—</div>
+          </div>
+          <div class="mid">vs</div>
+          <div class="side" id="vs_step">
+            <div class="sk">With step-up</div>
+            <div class="sv" id="vss_sip">—</div>
+            <div class="sx" id="vss_total">—</div>
+          </div>
+        </div>
+        <div class="band-note" id="goal_verdict"></div>
+        <div class="verdict" id="goal_feas"><span class="ico">●</span><span id="goal_feas_txt"></span></div>
+        <div class="act-row">
+          <button class="btn" id="goal_use">Use Required SIP</button>
+          <span class="mc-status" id="goal_use_note"></span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANE · RETIREMENT / FIRE  (Features 2 + 3)
+       ============================================================ -->
+  <div class="pane" id="pane-fire">
+    <p class="pane-intro">Size the corpus your retirement actually needs — today's expenses inflated to your retirement date, then divided by a safe withdrawal rate — and measure it against what your current plan is on track to build.</p>
+    <div class="g12">
+      <section class="panel">
+        <div class="phase-tag swp"><span class="dot"></span>Your retirement</div>
+        <div id="fireCtrls"></div>
+      </section>
+
+      <section class="panel">
+        <div class="advice-head">
+          <span class="ah-title">Retirement maths</span>
+          <span id="fire_years" style="font-size:.8rem;font-weight:600;color:var(--forest);"></span>
+        </div>
+        <div class="tiles t2">
+          <div class="tile"><div class="tk">Monthly expense at retirement</div><div class="tv" id="f_mexp">—</div><div class="ts" id="f_mexp_sub">in future rupees</div></div>
+          <div class="tile"><div class="tk">Annual expense at retirement</div><div class="tv" id="f_aexp">—</div><div class="ts">first year of retirement</div></div>
+          <div class="tile hero"><div class="tk">Required corpus</div><div class="tv" id="f_req">—</div><div class="ts" id="f_req_sub">—</div></div>
+          <div class="tile"><div class="tk">Years remaining</div><div class="tv" id="f_yrs">—</div><div class="ts">to build it</div></div>
+        </div>
+        <div class="src-note">
+          <span>▸</span>
+          <div>Projected corpus is built from your <b>Calculator</b> inputs — <span id="fire_src">—</span> — compounded to your retirement age. Change them on the Calculator tab and this updates.</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ---- Gap analysis (Feature 3) ---- -->
+    <section class="panel advice-panel" id="gapPanel" style="margin-top:18px;">
+      <div class="advice-head">
+        <span class="ah-title">Retirement gap analysis</span>
+        <span class="chip" id="gap_chip"><span class="ci">●</span><span id="gap_chip_txt">—</span></span>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="tk">Required corpus</div><div class="tv" id="gp_req">—</div><div class="ts">what you need</div></div>
+        <div class="tile"><div class="tk">Projected corpus</div><div class="tv" id="gp_proj">—</div><div class="ts" id="gp_proj_sub">on your current plan</div></div>
+        <div class="tile" id="gp_gap_tile"><div class="tk" id="gp_gap_k">Corpus gap</div><div class="tv" id="gp_gap">—</div><div class="ts" id="gp_gap_sub">—</div></div>
+      </div>
+
+      <div class="band-track" id="gap_track" style="margin-top:14px;">
+        <div class="band-zone" id="gap_fill" style="left:0;background:rgba(47,125,84,.32);"></div>
+        <div class="band-pointer" id="gap_ptr" style="left:100%;"></div>
+      </div>
+      <div class="band-legend">
+        <span><i style="background:rgba(47,125,84,.55)"></i>Projected corpus</span>
+        <span><i style="background:rgba(28,33,28,.55)"></i>Required corpus</span>
+      </div>
+
+      <div id="gap_fix">
+        <div class="section-split"></div>
+        <h2 style="font-size:1rem;margin:0 0 4px;">Closing the gap</h2>
+        <p class="sub" style="margin:0 0 12px;" id="gap_fix_sub"></p>
+        <div class="vs">
+          <div class="side" id="gap_vs_fixed">
+            <div class="sk">Extra SIP needed</div>
+            <div class="sv" id="gp_addsip">—</div>
+            <div class="sx" id="gp_addsip_x">flat, every month</div>
+          </div>
+          <div class="mid">or</div>
+          <div class="side" id="gap_vs_step">
+            <div class="sk">Extra SIP, rising yearly</div>
+            <div class="sv" id="gp_addsip_step">—</div>
+            <div class="sx" id="gp_addsip_step_x">—</div>
+          </div>
+        </div>
+        <div class="act-row">
+          <button class="btn" id="gap_apply">Add this to my SIP</button>
+          <span class="mc-status" id="gap_apply_note"></span>
+        </div>
+      </div>
+      <div class="verdict good" id="gap_ok" style="display:none;">
+        <span class="ico" style="color:var(--good)">●</span>
+        <span id="gap_ok_txt"></span>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       PANE · SCENARIO COMPARISON  (Feature 4)
+       ============================================================ -->
+  <div class="pane" id="pane-scen">
+    <p class="pane-intro">Put up to three plans side by side. Each runs the same month-by-month engine as the main calculator, starting from zero so the comparison isolates <b>what your SIP alone builds</b>.</p>
+    <div class="g3" id="scenCards"></div>
+
+    <div class="panel chart-card" style="margin-top:18px;">
+      <div class="advice-head">
+        <span class="ah-title">Corpus growth compared</span>
+        <span id="scen_best_note" style="font-size:.8rem;font-weight:600;color:var(--forest);"></span>
+      </div>
+      <div class="legend" id="scen_legend"></div>
+      <div class="chart-wrap" style="height:320px;">
+        <canvas id="scenChart" role="img" aria-label="Line chart: scenarios compared"></canvas>
+        <div id="scenTip" style="position:absolute;pointer-events:none;background:var(--ink);color:#f4f0e6;
+          border-radius:8px;padding:8px 10px;font-size:.74rem;line-height:1.55;opacity:0;transition:opacity .12s;
+          white-space:nowrap;box-shadow:var(--shadow);z-index:5;"></div>
+      </div>
+      <div class="cmp-scroll">
+        <table class="cmp">
+          <thead><tr><th>Scenario</th><th>Monthly SIP</th><th>Step-up</th><th>Return</th><th>Horizon</th>
+            <th>Total invested</th><th>Wealth created</th><th>Final corpus</th></tr></thead>
+          <tbody id="scen_tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANE · MONTE CARLO  (Feature 5)
+       ============================================================ -->
+  <div class="pane" id="pane-mc">
+    <p class="pane-intro">A single average return is a fiction — real markets wander. This runs your plan through thousands of randomly drawn return paths to show the <b>range</b> of outcomes, not just the midpoint.</p>
+    <div class="g12">
+      <section class="panel">
+        <div class="phase-tag accum"><span class="dot"></span>Simulation settings</div>
+        <div id="mcCtrls"></div>
+        <div class="src-note">
+          <span>▸</span>
+          <div>Running on your <b id="mc_mode_lbl">—</b> plan from the Calculator: <span id="mc_src">—</span></div>
+        </div>
+        <div class="mc-run">
+          <button class="btn" id="mc_run">Run simulation</button>
+          <button class="btn ghost" id="mc_reroll">Re-roll</button>
+          <span class="mc-status" id="mc_status">Not run yet</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="mc-headline">
+          <div class="mk">Probability of success</div>
+          <div class="mv" id="mc_line">Run the simulation to see the odds.</div>
+          <div class="mc-bar"><i id="mc_bar" style="width:0%"></i></div>
+          <div id="mc_sub" style="font-size:.79rem;color:#cdd6cc;margin-top:9px;position:relative;z-index:1;"></div>
+        </div>
+        <div class="tiles">
+          <div class="tile bad"><div class="tk">Worst case</div><div class="tv" id="mc_p5">—</div><div class="ts">5th percentile</div></div>
+          <div class="tile"><div class="tk">Median</div><div class="tv" id="mc_p50">—</div><div class="ts">50th percentile</div></div>
+          <div class="tile good"><div class="tk">Best case</div><div class="tv" id="mc_p95">—</div><div class="ts">95th percentile</div></div>
+          <div class="tile brass"><div class="tk">Success rate</div><div class="tv" id="mc_succ">—</div><div class="ts" id="mc_succ_sub">paths reaching target</div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="panel chart-card" style="margin-top:18px;">
+      <h2>Distribution of final corpus</h2>
+      <div class="pctl-legend">
+        <span><i style="background:rgba(20,84,59,.55)"></i>Paths at or above target</span>
+        <span><i style="background:rgba(188,79,44,.45)"></i>Paths falling short</span>
+        <span style="color:var(--ink)"><i class="ln"></i>Median</span>
+        <span style="color:var(--brass)"><i class="ln"></i>Target</span>
+      </div>
+      <div class="chart-wrap" style="height:300px;">
+        <canvas id="mcChart" role="img" aria-label="Histogram: distribution of simulated final corpus"></canvas>
+        <div id="mcTip" style="position:absolute;pointer-events:none;background:var(--ink);color:#f4f0e6;
+          border-radius:8px;padding:8px 10px;font-size:.74rem;line-height:1.55;opacity:0;transition:opacity .12s;
+          white-space:nowrap;box-shadow:var(--shadow);z-index:5;"></div>
+      </div>
+      <div class="empty-note" id="mc_empty">No simulation yet — set your volatility and press <b>Run simulation</b>.</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p class="disclaimer">
+    <strong>Important.</strong> This is a planning illustration, not investment advice, and no figure here is a forecast or a guarantee. Every projection assumes a <em>constant</em> annual return, steady inflation and uninterrupted contributions, compounded monthly — real markets deliver none of those. Returns are shown before tax, exit load and fund expenses; capital gains on redemption will reduce what you actually receive.
+    <br><br>
+    <strong>Per section.</strong> The <em>safe withdrawal band</em> is guidance, not a rule: its floor withdraws only your inflation-adjusted return so the corpus is preserved, while its ceiling drains the corpus to roughly zero at the end of your SWP period. <em>Target Corpus</em>, <em>Goals</em> and <em>Retirement</em> solve backwards from assumptions you supply — change the return or inflation and the required SIP moves sharply, so treat the inputs as the real decision. The <em>4% withdrawal rule</em> originates in US market history and may not hold for Indian markets or for retirements longer than 30 years. <em>Monte Carlo</em> draws returns from a normal distribution, which understates the fat tails and sequence-of-returns risk of real markets; its success rate is a comparison tool, not a probability you should bank on.
+    <br><br>
+    Figures in <em>Today's value</em> are discounted at your stated inflation rate. Mutual fund investments are subject to market risk; read all scheme-related documents carefully. Please confirm any plan with a SEBI-registered investment adviser before acting on it.
+  </p>
+</footer>
+
+<script>
+/* Fixed local PIN gate. This is a convenience barrier, not strong security. */
+const ACCESS_PIN = "2702";
+const accessForm = document.getElementById("access-form");
+const accessPin = document.getElementById("access-pin");
+const accessError = document.getElementById("access-error");
+accessPin.autofocus = true;
+
+accessForm.addEventListener("submit", event => {
+  event.preventDefault();
+  accessError.textContent = "";
+  if (accessPin.value !== ACCESS_PIN) {
+    accessError.textContent = "Incorrect PIN. Please try again.";
+    accessPin.select();
+    return;
+  }
+  document.body.classList.add("is-unlocked");
+});
+
+/* =========================================================
+   Financial Returns Calculator — SIP accumulation + SWP drawdown
+   Month-by-month simulation for exactness with step-ups.
+   ========================================================= */
+
+const F = {}; // field refs
+const ids = ["holdings","sip","sipstep","ret","acc","swpyears","infl","swpstep","swp"];
+ids.forEach(id=>{
+  F[id]={box:document.getElementById(id), range:document.getElementById(id+"_r")};
+  F[id].box.setAttribute("autocomplete","off");          // don't let the browser restore stale values
+});
+
+// Defaults (₹, %, yrs)
+const state = {
+  holdings:500000, sip:25000, sipstep:10, ret:12, acc:15,
+  swpyears:25, infl:6, swpstep:6, swp:0,  // swp 0 => auto-fill suggested on first run
+  swpEnabled:false,                        // SWP is optional; off by default
+  mode:"sipswp"                            // "sipswp" (build then withdraw) | "lumpsum" (withdraw from a lump sum)
+};
+const pctFields = new Set(["sipstep","ret","infl","swpstep"]);
+const moneyFields = new Set(["holdings","sip","swp"]);
+
+let activeDrag = null;        // which input is being dragged (to keep swp slider max stable)
+let swpTouched = false;       // has user set SWP manually?
+
+/* Escape user-typed text before it is ever interpolated into innerHTML. */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ---------- Indian number formatting ---------- */
+function groupIndian(n){
+  n = Math.round(n);
+  const s = String(Math.abs(n));
+  let out;
+  if(s.length<=3){ out=s; }
+  else{
+    const last3 = s.slice(-3);
+    let rest = s.slice(0,-3);
+    rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g,",");
+    out = rest+","+last3;
+  }
+  return (n<0?"-":"")+out;
+}
+function inr(n){ return "₹"+groupIndian(n); }
+function inrShort(n){
+  const a=Math.abs(n);
+  if(a>=1e7) return "₹"+ (n/1e7).toFixed(a>=1e8?1:2).replace(/\.?0+$/,'') +" Cr";
+  if(a>=1e5) return "₹"+ (n/1e5).toFixed(a>=1e6?1:2).replace(/\.?0+$/,'') +" L";
+  if(a>=1e3) return "₹"+ Math.round(n/1e3) +"K";
+  return "₹"+Math.round(n);
+}
+
+/* ---------- Core simulation ---------- */
+function simulate(s){
+  // Effective monthly rate: an annual % compounds to exactly (1+r)^years (matches the
+  // standard lumpsum formula), instead of r/12 which inflates the effective return.
+  const i = Math.pow(1 + s.ret/100, 1/12) - 1;
+  const lump = s.mode === "lumpsum";
+  // In lump-sum mode there is no accumulation: the corpus is the lump sum, drawn down immediately.
+  const accM = lump ? 0 : Math.round(s.acc*12);
+  // --- Act I: accumulation (skipped entirely for lump sum) ---
+  let bal = s.holdings;
+  let invested = s.holdings;
+  let curSip = lump ? 0 : s.sip;
+  const series = [{m:0, bal, invested, phase: lump ? "s" : "a"}];
+  for(let m=1;m<=accM;m++){
+    bal = bal*(1+i) + curSip;
+    invested += curSip;
+    if(m%12===0) curSip *= (1+s.sipstep/100);
+    series.push({m, bal, invested, phase:"a"});
+  }
+  const corpus = bal;
+  const accReturns = corpus - invested;
+
+  // --- Act II: drawdown (optional) ---
+  const swpM = (s.swpEnabled===false) ? 0 : Math.round(s.swpyears*12);
+  let curSwp = s.swp;
+  let withdrawn = 0;
+  let depletionM = null;
+  let lastIncome = curSwp;
+  // Per-year roll-up of the drawdown, so the schedule table can show what is
+  // withdrawn each year and what corpus survives it.
+  const yearly = [];
+  let yOpen=0, yWith=0, yGrow=0, yMonthly=0, yMonths=0;
+  for(let m=1;m<=swpM;m++){
+    if((m-1)%12===0){ yOpen=bal; yWith=0; yGrow=0; yMonths=0; yMonthly=curSwp; }
+    const growth = bal*i;
+    bal += growth;
+    yGrow += growth;
+    let w = curSwp;
+    if(w>bal){ w=Math.max(bal,0); }
+    bal -= w;
+    withdrawn += w;
+    yWith += w;
+    yMonths++;
+    if(w>0) lastIncome = curSwp;
+    if(bal<=0.0001 && depletionM===null){ depletionM = m; }
+    if(m%12===0) curSwp *= (1+s.swpstep/100);
+    series.push({m:accM+m, bal:Math.max(bal,0), invested, phase:"s"});
+    if(m%12===0 || m===swpM){
+      yearly.push({
+        year:Math.ceil(m/12), months:yMonths, open:yOpen, monthly:yMonthly,
+        growth:yGrow, withdrawn:yWith, close:Math.max(bal,0),
+        dry: depletionM!==null && depletionM<=m && depletionM>m-yMonths
+      });
+    }
+  }
+
+  return {
+    accM, swpM, series, corpus, invested, accReturns, yearly,
+    withdrawn, endingBalance:Math.max(bal,0), depletionM, lastIncome,
+    firstIncome:s.swp
+  };
+}
+
+// Ending balance for a given starting SWP (used by solvers; flat sim, no series)
+function endBalForSwp(corpus, i, swpM, W0, step){
+  let bal=corpus, w=W0;
+  for(let m=1;m<=swpM;m++){
+    bal = bal*(1+i) - w;
+    if(bal<0) return bal;             // depleted
+    if(m%12===0) w*=(1+step/100);
+  }
+  return bal;
+}
+
+/* ---------- Safe band ----------
+   Green "safe" zone is capped at the conventional 6%-of-corpus-per-year guideline,
+   OR the sustainable (real-return) rate if that is lower — so it is never above 6%. */
+const SAFE_CAP_PCT = 6;   // max % of corpus per year considered "safe" (industry 4–6% norm)
+function safeBand(s, corpus){
+  const i = Math.pow(1 + s.ret/100, 1/12) - 1;
+  const swpM = Math.round(s.swpyears*12);
+  // Sustainable rate: withdraw only the REAL monthly return so corpus keeps pace with inflation.
+  const realMonthly = Math.pow((1+s.ret/100)/(1+s.infl/100), 1/12) - 1;
+  const sustainable = Math.max(corpus*realMonthly, 0);
+  const safeCap = corpus*(SAFE_CAP_PCT/100)/12;     // 6% of corpus per year, monthly
+  // Green ceiling = the lower of "sustainable" and the 6% cap → green never exceeds 6%.
+  const floor = Math.min(sustainable, safeCap);
+  // Red ceiling: starting withdrawal that drains corpus to ~0 exactly at end of horizon.
+  let lo=0, hi=Math.max(corpus,1);
+  for(let k=0;k<70;k++){
+    const mid=(lo+hi)/2;
+    if(endBalForSwp(corpus,i,swpM,mid,s.swpstep) > 0) lo=mid; else hi=mid;
+  }
+  const ceiling = lo;
+  // Advisor's pick: the top of the safe/green zone (≤6%).
+  const suggested = floor;
+  return {floor, ceiling, suggested, sustainable, safeCap, realMonthly};
+}
+
+/* ---------- Render ---------- */
+var platformSync = null;      // hoisted hook; the platform layer assigns it at boot
+let view = "nominal";
+function deflator(s, years){ return Math.pow(1+s.infl/100, years); }
+
+// Present value of the whole withdrawal stream: each year discounted at its own
+// point in time. Dividing the nominal total by a single end-of-horizon deflator
+// understates it heavily, because most of the rupees are drawn long before then.
+function pvWithdrawn(sim, s){
+  const accYears = sim.accM/12;
+  return sim.yearly.reduce((a,r)=> a + r.withdrawn/deflator(s, accYears + r.year), 0);
+}
+
+function render(){
+  const s = state;
+  const sim = simulate(s);
+  const band = safeBand(s, sim.corpus);
+
+  // ---- SWP on/off presentation ----
+  const swpOn = s.swpEnabled !== false;
+  document.getElementById("drawdownCard").style.display = swpOn ? "" : "none";
+  document.getElementById("adviceWrap").style.display = swpOn ? "" : "none";
+  document.getElementById("resultDuo").style.display = swpOn ? "" : "none";
+  document.getElementById("swp_off_note").style.display = swpOn ? "none" : "block";
+  document.getElementById("swpBlock").classList.toggle("off", !swpOn);
+  document.getElementById("overall_k").textContent = swpOn ? "Corpus at retirement" : "Total corpus";
+
+  // headline numbers
+  const realCorpusDiv = deflator(s, s.acc);
+  const showReal = view==="real";
+  const conv = (nominal, years)=> showReal ? nominal/deflator(s,years) : nominal;
+
+  // caption that makes the Nominal / Today's-value toggle self-explanatory
+  const vnote = document.getElementById("view_note");
+  if(showReal){
+    if(s.infl>0){
+      vnote.className="view-note";
+      vnote.textContent = `Future ₹ discounted to today at ${s.infl}% inflation`;
+    }else{
+      vnote.className="view-note warn";
+      vnote.textContent = "Inflation is 0% — today's value equals nominal. Raise inflation to see the difference.";
+    }
+  }else{
+    vnote.className="view-note";
+    vnote.textContent = "";
+  }
+
+  setNum("s_invested", inr(sim.invested));
+  document.getElementById("s_invested_sub").textContent = showReal ? "nominal cost" : "money you put in";
+  setNum("s_returns", inr(showReal ? sim.accReturns/realCorpusDiv : sim.accReturns));
+  setNum("s_overall", inr(conv(sim.corpus, s.acc)));
+  document.getElementById("s_overall_sub").textContent = showReal
+      ? "in today's money" : "total value";
+  document.getElementById("s_returns_sub").textContent = showReal
+      ? "today's value" : "wealth gained";
+
+  // ---- Lump-sum mode: repurpose the headline cards for a pure drawdown ----
+  const lump = s.mode === "lumpsum";
+  document.getElementById("invested_k").textContent = lump ? "Lump sum" : "Total invested";
+  document.getElementById("returns_k").textContent  = lump ? "Total withdrawn" : "Total returns";
+  document.getElementById("overall_k").textContent  = lump ? "Balance at end" : (swpOn ? "Corpus at retirement" : "Total corpus");
+  document.getElementById("donutCard").style.display = lump ? "none" : "";
+  document.querySelector(".charts-row").classList.toggle("solo", lump);
+  document.getElementById("drawdownCard").style.display = (swpOn && !lump) ? "" : "none";
+  document.getElementById("resultDuo").style.gridTemplateColumns = lump ? "1fr" : "";
+  if(lump){
+    setNum("s_invested", inr(sim.invested));                       // = the lump sum (no growth phase)
+    document.getElementById("s_invested_sub").textContent = "your starting corpus";
+    setNum("s_returns", inr(showReal ? pvWithdrawn(sim,s) : sim.withdrawn));
+    document.getElementById("s_returns_sub").textContent = showReal ? "today's value" : "total drawn over SWP";
+    setNum("s_overall", inr(conv(sim.endingBalance, s.swpyears)));
+    document.getElementById("s_overall_sub").textContent = showReal ? "in today's money" : "left after SWP";
+  }
+
+  // drawdown feature
+  const endYears = s.acc + s.swpyears;
+  const f_end = document.getElementById("f_ending");
+  f_end.textContent = inr(conv(sim.endingBalance, endYears));
+  fitText(f_end);
+  const note = document.getElementById("f_ending_note");
+  if(sim.depletionM){
+    const dy = Math.floor((sim.depletionM-1)/12);
+    const dm = ((sim.depletionM-1)%12)+1;
+    note.innerHTML = `⚠ Corpus runs dry after <b>~${dy} yr ${dm} mo</b> of withdrawals — short of your ${s.swpyears}-yr goal.`;
+    note.style.color="var(--bad)";
+  }else{
+    note.textContent = `Corpus remaining when your ${s.swpyears}-yr SWP ends`;
+    note.style.color="";
+  }
+  document.getElementById("f_withdrawn").textContent = inrShort(showReal ? pvWithdrawn(sim,s) : sim.withdrawn);
+  document.getElementById("f_firstinc").textContent = inrShort(showReal ? sim.firstIncome/realCorpusDiv : sim.firstIncome);
+  // last income value in nominal then convert at end-of-horizon
+  document.getElementById("f_lastinc").textContent = inrShort(showReal ? sim.lastIncome/deflator(s,endYears) : sim.lastIncome);
+
+  // donut split
+  const principalPct = sim.corpus>0 ? sim.invested/sim.corpus : 1;
+  document.getElementById("sp_principal").textContent = inrShort(sim.invested);
+  document.getElementById("sp_gains").textContent = inrShort(sim.accReturns);
+  document.getElementById("sp_total").textContent = inrShort(sim.corpus);
+  document.getElementById("donut_ratio").textContent = sim.invested>0
+      ? (sim.accReturns/sim.invested).toFixed(2)+"×" : "—";
+
+  // ---- safe band UI ----
+  document.getElementById("band_corpus").textContent = "Corpus: "+inrShort(sim.corpus);
+  // withdrawal as a % of corpus per year (first-year basis)
+  const pctYr = v => sim.corpus>0 ? (v*12/sim.corpus*100) : 0;
+  const swpPct = pctYr(s.swp), safePct = pctYr(band.floor);
+  document.getElementById("suggest_val").textContent = inr(band.suggested)+" /mo · "+safePct.toFixed(1)+"% p.a.";
+  document.getElementById("band_note").textContent =
+    `Green safe zone tops out near ${safePct.toFixed(1)}% of your corpus a year (the conventional 4–6% rule). You're at ${swpPct.toFixed(1)}%.`;
+
+  // SWP slider dynamic max (keep stable while dragging the swp slider itself)
+  if(activeDrag !== "swp"){
+    let mx = Math.max(band.ceiling*1.5, band.floor*2, 20000);
+    mx = Math.ceil(mx/5000)*5000;
+    F.swp.range.max = mx;
+    document.getElementById("swp_max_lbl").textContent = inrShort(mx);
+  }
+  const mx = parseFloat(F.swp.range.max);
+
+  // band zones on the mini-track (as % of slider max)
+  const fp = Math.min(band.floor/mx,1)*100;
+  const cp = Math.min(band.ceiling/mx,1)*100;
+  document.getElementById("z_sus").style.left="0%";
+  document.getElementById("z_sus").style.width=fp+"%";
+  document.getElementById("z_mod").style.left=fp+"%";
+  document.getElementById("z_mod").style.width=Math.max(cp-fp,0)+"%";
+  document.getElementById("z_agg").style.left=cp+"%";
+  document.getElementById("z_agg").style.width=Math.max(100-cp,0)+"%";
+  const ptr = Math.min(s.swp/mx,1)*100;
+  document.getElementById("band_ptr").style.left=ptr+"%";
+
+  // colour the real SWP slider track with the band
+  F.swp.range.style.setProperty("--bandbg",
+    `linear-gradient(90deg,
+      rgba(47,125,84,.45) 0%, rgba(47,125,84,.45) ${fp}%,
+      rgba(194,144,31,.45) ${fp}%, rgba(194,144,31,.45) ${cp}%,
+      rgba(188,79,44,.35) ${cp}%, rgba(188,79,44,.35) 100%)`);
+
+  // verdict
+  const v = document.getElementById("verdict");
+  const vt = document.getElementById("verdict_txt");
+  if(s.swp<=band.floor+1){
+    v.className="verdict good"; v.querySelector(".ico").style.color="var(--good)";
+    vt.textContent=`Safe — about ${swpPct.toFixed(1)}% of your corpus a year, within the 4–6% comfort zone.`;
+  }else if(s.swp<=band.ceiling){
+    v.className="verdict warn"; v.querySelector(".ico").style.color="var(--warn)";
+    vt.textContent=`Moderate — ~${swpPct.toFixed(1)}%/yr. Above the safe band, but the corpus still lasts your full horizon.`;
+  }else{
+    v.className="verdict bad"; v.querySelector(".ico").style.color="var(--bad)";
+    vt.textContent=`Aggressive — ~${swpPct.toFixed(1)}%/yr. The corpus empties before your SWP period ends.`;
+  }
+
+  renderSchedule(sim, s, showReal);
+
+  renderHero(sim, s, showReal, band);
+
+  window.__sim = sim; // for tooltip
+  window.__state = s;
+  drawTimeline(sim, s);
+  drawDonut(sim);
+  // Let the platform tabs (goal / FIRE / Monte Carlo) follow the main inputs.
+  // Assigned by the platform layer once it boots. This must be a `var`, not a
+  // `typeof` check on the const: init() runs before those consts are evaluated,
+  // and `typeof` on a let/const in its temporal dead zone still throws.
+  if(platformSync) platformSync();
+}
+
+/* ---------- Year-by-year SWP schedule ---------- */
+// Rows are built from the same month-by-month simulation, so the table always
+// reconciles with the headline numbers (closing corpus of the last row ==
+// "balance at end", sum of the withdrawn column == "total withdrawn").
+let schedRows = [];
+let schedMeta = null;      // snapshot of the run behind schedRows, for CSV/PDF export
+function renderSchedule(sim, s, showReal){
+  const card = document.getElementById("scheduleCard");
+  const on = s.swpEnabled !== false && sim.yearly.length > 0;
+  card.style.display = on ? "" : "none";
+  if(!on){ schedRows = []; schedMeta = null; return; }
+
+  const accYears = sim.accM/12;                       // 0 in lump-sum mode
+  // Opening corpus / monthly SWP are start-of-year figures; withdrawals, growth
+  // and the closing corpus are end-of-year figures — discount each accordingly.
+  const atStart = y => showReal ? deflator(s, accYears + y - 1) : 1;
+  const atEnd   = y => showReal ? deflator(s, accYears + y)     : 1;
+
+  schedRows = sim.yearly.map(r=>{
+    const open      = r.open      / atStart(r.year);
+    const withdrawn = r.withdrawn / atEnd(r.year);
+    const close     = r.close     / atEnd(r.year);
+    return {
+      year:r.year, months:r.months, dry:r.dry, open, withdrawn, close,
+      monthly: r.monthly / atStart(r.year),
+      // Derived, not discounted, so every row foots: open + growth - withdrawn = close.
+      // Nominally this is exactly the simulated growth. In today's-value terms it is
+      // REAL growth — net of the purchasing power the corpus lost to inflation that
+      // year — which is the only figure that can reconcile a real-terms statement.
+      growth: close + withdrawn - open
+    };
+  });
+  document.getElementById("th_growth").textContent = showReal ? "Real growth" : "Growth earned";
+
+  const body = document.getElementById("sched_body");
+  body.innerHTML = schedRows.map(r=>{
+    const cls = [r.dry ? "dry" : "", r.months<12 ? "part" : ""].filter(Boolean).join(" ");
+    const yrLbl = "Year "+r.year + (r.months<12 ? ` (${r.months} mo)` : "");
+    return `<tr class="${cls}">`
+      + `<td>${yrLbl}</td>`
+      + `<td>${inr(r.open)}</td>`
+      + `<td class="c-swp">${inr(r.monthly)}</td>`
+      + `<td>${inr(r.withdrawn)}</td>`
+      + `<td class="c-growth">+${inr(r.growth)}</td>`
+      + `<td class="c-close">${inr(r.close)}</td>`
+      + `</tr>`;
+  }).join("");
+
+  const totW = schedRows.reduce((a,r)=>a+r.withdrawn,0);
+  const totG = schedRows.reduce((a,r)=>a+r.growth,0);
+  const last = schedRows[schedRows.length-1];
+
+  // Everything an export needs, captured on the same basis as the visible table.
+  schedMeta = {
+    lump:s.mode==="lumpsum", showReal, accYears,
+    infl:s.infl, ret:s.ret, swpyears:s.swpyears, swpstep:s.swpstep, swp:s.swp,
+    holdings:s.holdings, sip:s.sip, sipstep:s.sipstep, acc:s.acc,
+    corpus:  showReal ? sim.corpus/deflator(s,accYears) : sim.corpus,
+    withdrawn:totW, growth:totG, ending:last.close,
+    depletionM:sim.depletionM
+  };
+  document.getElementById("sched_foot").innerHTML =
+      `<tr><td>Total · ${schedRows.length} yrs</td><td>—</td><td>—</td>`
+    + `<td>${inr(totW)}</td><td class="c-growth">+${inr(totG)}</td>`
+    + `<td class="c-close">${inr(last.close)}</td></tr>`;
+
+  document.getElementById("sched_sub").textContent = showReal
+    ? `Each year discounted to today's money at ${s.infl}% inflation`
+    : "Nominal rupees, in the year they actually occur";
+
+  const note = document.getElementById("sched_note");
+  if(sim.depletionM){
+    const dy = Math.floor((sim.depletionM-1)/12), dm = ((sim.depletionM-1)%12)+1;
+    note.innerHTML = `⚠ The corpus is exhausted in <b>year ${dy+1}, month ${dm}</b> — rows after that withdraw whatever is left, not the full monthly amount.`;
+  }else{
+    note.textContent = `Monthly SWP rises ${s.swpstep}% at the start of each new year; the corpus compounds at ${s.ret}% p.a. between withdrawals.`;
+  }
+}
+
+// CSV of exactly what is on screen (nominal or today's value, per the toggle)
+document.getElementById("sched_csv").addEventListener("click", ()=>{
+  if(!schedRows.length) return;
+  const head = ["Year","Months","Opening corpus","Monthly SWP","Withdrawn in year","Growth earned","Closing corpus"];
+  const lines = [head.join(",")].concat(schedRows.map(r=>
+    [r.year, r.months, Math.round(r.open), Math.round(r.monthly),
+     Math.round(r.withdrawn), Math.round(r.growth), Math.round(r.close)].join(",")
+  ));
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `swp-schedule-${view}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ---------- PDF export ----------
+   No PDF library: we render a purpose-built print document into a hidden iframe
+   and hand it to the browser, whose "Save as PDF" destination produces the file.
+   Keeps this page a single dependency-free file that still works offline. */
+function schedulePdfHtml(){
+  const m = schedMeta;
+  const basis = m.showReal
+    ? `All figures discounted to today's money at ${m.infl}% inflation`
+    : "All figures in nominal rupees, in the year they occur";
+  const today = new Date().toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"});
+
+  const facts = m.lump
+    ? [["Lump sum invested", inr(m.holdings)],
+       ["Expected return", m.ret+"% p.a."],
+       ["SWP period", m.swpyears+" years"],
+       ["Starting monthly withdrawal", inr(m.swp)],
+       ["Withdrawal step-up", m.swpstep+"% a year"],
+       ["Inflation assumption", m.infl+"%"]]
+    : [["Current holdings", inr(m.holdings)],
+       ["Monthly SIP", inr(m.sip)+" · +"+m.sipstep+"% a year"],
+       ["Accumulation period", m.acc+" years"],
+       ["Expected return", m.ret+"% p.a."],
+       ["SWP period", m.swpyears+" years"],
+       ["Starting monthly withdrawal", inr(m.swp)],
+       ["Withdrawal step-up", m.swpstep+"% a year"],
+       ["Inflation assumption", m.infl+"%"]];
+
+  const heads = [[m.lump?"Starting corpus":"Corpus at retirement", inr(m.corpus)],
+                 ["Total withdrawn", inr(m.withdrawn)],
+                 ["Balance at end", inr(m.ending)]];
+
+  const rows = schedRows.map(r=>
+    `<tr class="${r.dry?"dry":""}">`
+    + `<td class="y">Year ${r.year}${r.months<12?` (${r.months} mo)`:""}${r.dry?" · runs dry":""}</td>`
+    + `<td>${inr(r.open)}</td><td class="swp">${inr(r.monthly)}</td>`
+    + `<td>${inr(r.withdrawn)}</td><td class="gr">+${inr(r.growth)}</td>`
+    + `<td class="cl">${inr(r.close)}</td></tr>`).join("");
+
+  const warn = m.depletionM
+    ? `<p class="warn">&#9888; The corpus is exhausted in year ${Math.floor((m.depletionM-1)/12)+1}, month ${((m.depletionM-1)%12)+1}. Rows after that point withdraw whatever is left, not the full monthly amount.</p>`
+    : "";
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>SWP-Schedule-${m.showReal?"todays-value":"nominal"}</title>
+<style>
+  @page{ size:A4; margin:14mm 11mm 12mm; }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Hanken Grotesk",Helvetica,Arial,sans-serif;color:#1c211c;font-size:9.5pt;line-height:1.4;}
+  .kick{font-size:7pt;letter-spacing:.3em;text-transform:uppercase;color:#b88a2e;font-weight:700;}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:18pt;margin:2pt 0 1pt;letter-spacing:-.01em;}
+  .basis{color:#5c625b;font-size:8.5pt;margin:0;}
+  .meta{color:#8b9088;font-size:7.5pt;margin:2pt 0 0;}
+  hr{border:none;border-top:1.2pt solid #1c211c;margin:7pt 0 9pt;}
+  h2{font-family:Georgia,serif;font-size:10.5pt;margin:0 0 5pt;}
+  .heads{display:flex;gap:7pt;margin-bottom:9pt;}
+  .heads div{flex:1;border:.6pt solid #d9d2c2;border-left:2.4pt solid #14543b;border-radius:3pt;padding:5pt 7pt;}
+  .heads .k{font-size:6.6pt;text-transform:uppercase;letter-spacing:.1em;color:#8b9088;font-weight:700;}
+  .heads .v{font-family:Georgia,serif;font-size:12pt;font-weight:700;margin-top:1pt;}
+  .facts{display:flex;flex-wrap:wrap;gap:0 14pt;margin:0 0 9pt;padding:6pt 8pt;background:#f4f0e6;border-radius:3pt;}
+  .facts div{width:calc(33.33% - 10pt);display:flex;justify-content:space-between;gap:8pt;padding:1.5pt 0;border-bottom:.5pt dotted #d9d2c2;}
+  .facts .fk{color:#5c625b;font-size:8pt;}
+  .facts .fv{font-weight:700;font-size:8pt;white-space:nowrap;}
+  table{width:100%;border-collapse:collapse;font-size:8.6pt;}
+  thead{display:table-header-group;}
+  th{background:#efe9da;text-align:right;font-size:6.8pt;text-transform:uppercase;letter-spacing:.09em;
+     color:#5c625b;font-weight:700;padding:5pt 6pt;border-bottom:.8pt solid #1c211c;}
+  th:first-child,td.y{text-align:left;}
+  td{text-align:right;padding:3.4pt 6pt;border-bottom:.4pt solid #e6e0d1;
+     white-space:nowrap;font-variant-numeric:tabular-nums;}
+  td.y{font-weight:700;color:#454c43;}
+  td.swp{font-weight:700;color:#8a6517;}
+  td.gr{color:#2f7d54;}
+  td.cl{font-weight:700;color:#14543b;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  tr:nth-child(even) td{background:#faf8f2;}
+  tr.dry td{background:#f7e6df;}
+  tr.dry td.y,tr.dry td.cl{color:#bc4f2c;}
+  tfoot td{background:#efe9da;font-weight:700;border-top:.8pt solid #1c211c;border-bottom:none;padding:5pt 6pt;}
+  tfoot td.y{text-transform:uppercase;letter-spacing:.09em;font-size:6.8pt;color:#5c625b;}
+  .warn{color:#bc4f2c;font-size:8pt;margin:7pt 0 0;font-weight:600;}
+  .disc{margin:9pt 0 0;padding-top:6pt;border-top:.5pt solid #d9d2c2;color:#8b9088;font-size:7pt;line-height:1.5;}
+</style></head><body>
+  <div class="kick">Navin's Calculator</div>
+  <h1>Year-by-year withdrawal schedule</h1>
+  <p class="basis">${m.lump?"Lump sum":"SIP"} &rarr; SWP &middot; ${basis}</p>
+  <p class="meta">Generated ${today}</p>
+  <hr>
+  <div class="heads">${heads.map(h=>`<div><div class="k">${h[0]}</div><div class="v">${h[1]}</div></div>`).join("")}</div>
+  <h2>Assumptions</h2>
+  <div class="facts">${facts.map(f=>`<div><span class="fk">${f[0]}</span><span class="fv">${f[1]}</span></div>`).join("")}</div>
+  <h2>Schedule</h2>
+  <table>
+    <thead><tr><th>Year</th><th>Opening corpus</th><th>Monthly SWP</th>
+      <th>Withdrawn in year</th><th>${m.showReal?"Real growth":"Growth earned"}</th><th>Closing corpus</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td class="y">Total &middot; ${schedRows.length} yrs</td><td>&mdash;</td><td>&mdash;</td>
+      <td>${inr(m.withdrawn)}</td><td class="gr">+${inr(m.growth)}</td>
+      <td class="cl">${inr(m.ending)}</td></tr></tfoot>
+  </table>
+  ${warn}
+  <p class="disc"><strong>Note.</strong> Projections assume a constant ${m.ret}% return and steady ${m.infl}% inflation, compounded monthly, with withdrawals taken at each month end. ${m.showReal?`Every row is stated in today's purchasing power, so the growth column shows <strong>real</strong> growth &mdash; nominal growth less the value inflation took out of the corpus that year. `:""}Each row foots: opening corpus + growth &minus; withdrawn = closing corpus. Real returns vary and are not guaranteed. This schedule is a planning illustration, not investment advice.</p>
+</body></html>`;
+}
+
+document.getElementById("sched_pdf").addEventListener("click", ()=>{
+  if(!schedRows.length || !schedMeta) return;
+  const prev = document.getElementById("__printFrame");
+  if(prev) prev.remove();
+  const f = document.createElement("iframe");
+  f.id = "__printFrame";
+  f.setAttribute("aria-hidden","true");
+  // Off-screen rather than display:none — a hidden-by-display iframe won't print.
+  f.style.cssText = "position:fixed;left:-9999px;top:0;width:210mm;height:297mm;border:0;";
+  document.body.appendChild(f);
+  const d = f.contentWindow.document;
+  d.open(); d.write(schedulePdfHtml()); d.close();
+  const w = f.contentWindow;
+  w.onafterprint = ()=> setTimeout(()=>f.remove(), 300);
+  const fontsReady = (d.fonts && d.fonts.ready) ? d.fonts.ready : Promise.resolve();
+  fontsReady.catch(()=>{}).then(()=>setTimeout(()=>{
+    try{ w.focus(); w.print(); }
+    catch(err){ f.remove(); alert("Couldn't open the print dialog. Use Ctrl+P and choose \"Save as PDF\"."); }
+  }, 80));
+});
+
+function setNum(id, txt){ const el=document.getElementById(id); el.textContent = txt; fitText(el); }
+
+/* ---------- Hero summary ----------
+   Presentation only: it re-reads values simulate() already produced and states
+   them in plain language. No figure is recomputed here. */
+function renderHero(sim, s, showReal, band){
+  const lump  = s.mode === "lumpsum";
+  const swpOn = s.swpEnabled !== false;
+  const accY  = sim.accM/12;
+  const endY  = accY + (swpOn ? s.swpyears : 0);
+  const conv  = (v, yrs) => showReal ? v/deflator(s, yrs) : v;
+  const txt   = (id, v) => document.getElementById(id).textContent = v;
+
+  // 1 · the wealth
+  txt("h_corpus_k", lump ? "Your starting corpus" : "Corpus at retirement");
+  setNum("h_corpus", inr(conv(sim.corpus, accY)));
+  txt("h_corpus_sub", lump
+    ? `before any withdrawals begin`
+    : `from ${inrShort(s.sip)}/mo over ${s.acc} ${s.acc===1?"year":"years"}`
+      + (s.sipstep>0 ? `, rising ${s.sipstep}% a year` : ``));
+
+  // 2 · the withdrawal capacity  3 · what survives
+  const inc = document.getElementById("h_income_item");
+  const lft = document.getElementById("h_left_item");
+  inc.style.display = swpOn ? "" : "none";
+  lft.style.display = swpOn ? "" : "none";
+
+  if(swpOn){
+    txt("h_income_k", "Monthly income it supports");
+    setNum("h_income", inr(showReal ? sim.firstIncome/deflator(s,accY) : sim.firstIncome));
+    txt("h_income_sub", `for ${s.swpyears} years`
+      + (s.swpstep>0 ? `, rising ${s.swpstep}% a year` : ``));
+
+    txt("h_left_k", sim.depletionM ? "Runs out after" : "Left at the end");
+    if(sim.depletionM){
+      const dy=Math.floor((sim.depletionM-1)/12), dm=((sim.depletionM-1)%12)+1;
+      setNum("h_left", `${dy} yr ${dm} mo`);
+      txt("h_left_sub", `short of your ${s.swpyears}-year goal`);
+    }else{
+      setNum("h_left", inr(conv(sim.endingBalance, endY)));
+      txt("h_left_sub", `after ${s.swpyears} years of withdrawals`);
+    }
+  }
+
+  // Plain-English read-out of the same numbers.
+  const ins = document.getElementById("h_insight");
+  const pctYr = sim.corpus>0 ? (s.swp*12/sim.corpus*100) : 0;
+  if(!swpOn){
+    ins.innerHTML = lump
+      ? `Turn on a withdrawal plan to see the income this corpus can pay you.`
+      : `Of that, <b>${inrShort(sim.invested)}</b> is money you put in and `
+        + `<b>${inrShort(sim.accReturns)}</b> is growth. Turn on <b>Withdrawal · SWP</b> to see the income it can pay.`;
+  }else if(sim.depletionM){
+    const dy=Math.floor((sim.depletionM-1)/12);
+    ins.innerHTML = `<span class="warn-ico">⚠</span> Drawing <b>${inrShort(s.swp)}/mo</b> is about `
+      + `<b>${pctYr.toFixed(1)}% of your corpus a year</b> — too steep. The money runs out around year `
+      + `<b>${dy+1}</b>. Lowering the withdrawal to <b>${inrShort(band.suggested)}/mo</b> would keep it intact.`;
+  }else{
+    ins.innerHTML = `Drawing <b>${inrShort(s.swp)}/mo</b> is <b>${pctYr.toFixed(1)}% of your corpus a year</b>`
+      + (s.swp<=band.floor+1 ? ` — inside the safe 4–6% band.` : ` — above the safe band, but it still lasts the full ${s.swpyears} years.`)
+      + ` You'd still have <b>${inrShort(conv(sim.endingBalance,endY))}</b> at the end.`;
+  }
+}
+
+/* Every input stays visible on the panel — nothing is collapsed or hidden. */
+
+/* "Nice" axis ticks — 1/2/2.5/5 × 10ⁿ — so charts read ₹3 Cr, not ₹2.71 Cr. */
+function niceTicks(max, target){
+  if(!(max>0)) return {step:1, top:1, ticks:[0,1]};
+  const raw = max/(target||4);
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw/mag;
+  const step = (norm<=1?1:norm<=2?2:norm<=2.5?2.5:norm<=5?5:10)*mag;
+  const top = Math.ceil(max/step)*step;
+  const ticks=[]; for(let v=0; v<=top+step*0.001; v+=step) ticks.push(v);
+  return {step, top, ticks};
+}
+
+// Shrink a number's font-size until it fits its container (so big crore figures never clip)
+function fitText(el){
+  const max = parseFloat(el.dataset.max || "1.6");
+  const min = parseFloat(el.dataset.min || "0.85");
+  let size = max;
+  el.style.fontSize = size + "rem";
+  let guard = 0;
+  while(el.scrollWidth > el.clientWidth + 0.5 && size > min && guard < 60){
+    size -= 0.04; el.style.fontSize = size.toFixed(3) + "rem"; guard++;
+  }
+}
+
+/* ---------- Canvas: timeline area chart ---------- */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = r.width*dpr; cv.height = r.height*dpr;
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width, h:r.height};
+}
+
+let tlGeom = null;
+function drawTimeline(sim, s){
+  const cv = document.getElementById("timeline");
+  const {ctx,w,h} = setupCanvas(cv);
+  if(w<=0||h<=0) return;            // canvas hidden / not laid out yet
+  ctx.clearRect(0,0,w,h);
+  const padL=72, padR=18, padT=34, padB=38;
+  const plotW=w-padL-padR, plotH=h-padT-padB;
+  const series=sim.series;
+  const totalM = series[series.length-1].m || 1;
+  const rawMax = Math.max(...series.map(p=>p.bal), ...series.map(p=>p.invested), 1);
+  // Round the axis up to a "nice" number so labels read ₹3 Cr, not ₹2.71 Cr.
+  const ax = niceTicks(rawMax, 4);
+  const maxV = ax.top;
+
+  const X = m => padL + (m/totalM)*plotW;
+  const Y = v => padT + plotH - (v/maxV)*plotH;
+
+  const accX = X(sim.accM);
+
+  // phase background tints (drawn first so gridlines sit on top)
+  ctx.fillStyle="rgba(20,84,59,.045)";
+  ctx.fillRect(padL,padT,accX-padL,plotH);
+  ctx.fillStyle="rgba(184,138,46,.055)";
+  ctx.fillRect(accX,padT,w-padR-accX,plotH);
+
+  // y gridlines + labels
+  ctx.font="11.5px 'Hanken Grotesk', sans-serif";
+  ctx.textBaseline="middle";
+  ax.ticks.forEach(val=>{
+    const y = Y(val);
+    ctx.strokeStyle = val===0 ? "rgba(28,33,28,.20)" : "rgba(28,33,28,.07)";
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    ctx.fillStyle="#8b9088"; ctx.textAlign="right";
+    ctx.fillText(inrShort(val), padL-12, y);
+  });
+
+  // x labels (years)
+  ctx.textBaseline="top";
+  const totalYrs = Math.round(totalM/12);
+  const tick = totalYrs<=12?2:totalYrs<=25?5:10;
+  for(let yr=0; yr<=totalYrs; yr+=tick){
+    const x=X(yr*12);
+    // keep the first and last labels inside the canvas instead of clipping them
+    ctx.textAlign = yr===0 ? "left" : (yr+tick > totalYrs) ? "right" : "center";
+    ctx.fillStyle="#8b9088";
+    ctx.fillText("Year "+yr, x, h-padB+10);
+  }
+
+  // phase captions along the top gutter — says what each band means
+  ctx.font="700 10px 'Hanken Grotesk',sans-serif";
+  ctx.textBaseline="top"; ctx.textAlign="left";
+  if(sim.accM>0 && accX-padL > 74){
+    ctx.fillStyle="#7d8b81";
+    ctx.fillText("BUILDING", padL+3, padT-20);
+  }
+  if(sim.swpM>0 && (w-padR-accX) > 74){
+    ctx.fillStyle="#a8894a";
+    ctx.fillText("DRAWING DOWN", accX+7, padT-20);
+  }
+
+  // corpus area
+  const grad = ctx.createLinearGradient(0,padT,0,padT+plotH);
+  grad.addColorStop(0,"rgba(20,84,59,.34)");
+  grad.addColorStop(1,"rgba(20,84,59,.02)");
+  ctx.beginPath();
+  ctx.moveTo(X(0), Y(series[0].bal));
+  series.forEach(p=>ctx.lineTo(X(p.m), Y(p.bal)));
+  ctx.lineTo(X(totalM), Y(0)); ctx.lineTo(X(0), Y(0)); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+
+  // corpus line
+  ctx.beginPath();
+  series.forEach((p,idx)=> idx?ctx.lineTo(X(p.m),Y(p.bal)):ctx.moveTo(X(p.m),Y(p.bal)));
+  ctx.strokeStyle="#14543b"; ctx.lineWidth=2.4; ctx.lineJoin="round"; ctx.stroke();
+
+  // invested (cost) dashed line — accumulation phase
+  ctx.beginPath();
+  ctx.setLineDash([4,4]);
+  series.filter(p=>p.phase==="a").forEach((p,idx)=> idx?ctx.lineTo(X(p.m),Y(p.invested)):ctx.moveTo(X(p.m),Y(p.invested)));
+  ctx.strokeStyle="#8b9088"; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.setLineDash([]);
+
+  // retirement marker (only when there is an accumulation phase)
+  if(sim.accM>0){
+    ctx.beginPath(); ctx.setLineDash([5,4]);
+    ctx.moveTo(accX,padT-6); ctx.lineTo(accX,padT+plotH);
+    ctx.strokeStyle="#b88a2e"; ctx.lineWidth=1.6; ctx.stroke(); ctx.setLineDash([]);
+    // marker dot at peak
+    ctx.beginPath(); ctx.arc(accX, Y(sim.corpus), 5, 0, Math.PI*2);
+    ctx.fillStyle="#b88a2e"; ctx.fill();
+    ctx.strokeStyle="#fbf9f3"; ctx.lineWidth=2.5; ctx.stroke();
+    // Value label beside the peak — the one number people look for on this chart.
+    const lbl = inrShort(sim.corpus);
+    ctx.font="700 12px 'Hanken Grotesk',sans-serif";
+    const flip = accX > w*0.62;
+    const tw = ctx.measureText(lbl).width;
+    const bx = flip ? accX-tw-14 : accX+9, by = Y(sim.corpus)-30;
+    ctx.fillStyle="#fbf9f3"; ctx.strokeStyle="rgba(184,138,46,.45)"; ctx.lineWidth=1;
+    const rr=(x,y,ww,hh,r)=>{ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+ww,y,x+ww,y+hh,r);
+      ctx.arcTo(x+ww,y+hh,x,y+hh,r);ctx.arcTo(x,y+hh,x,y,r);ctx.arcTo(x,y,x+ww,y,r);ctx.closePath();};
+    rr(bx-5, by-3, tw+10, 21, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle="#8a6517"; ctx.textAlign="left"; ctx.textBaseline="top";
+    ctx.fillText(lbl, bx, by+2);
+  }
+
+  tlGeom = {padL,padR,padT,padB,plotW,plotH,totalM,maxV,X,Y,accX};
+}
+
+/* ---------- Canvas: donut ---------- */
+function drawDonut(sim){
+  const cv=document.getElementById("donut");
+  const {ctx,w,h}=setupCanvas(cv);
+  if(w<=0||h<=0) return;            // donut hidden (e.g. lump-sum mode)
+  ctx.clearRect(0,0,w,h);
+  const cx=w/2, cy=h/2, rO=Math.min(w,h)/2-4, rI=rO*0.62;
+  const total=Math.max(sim.corpus,1);
+  const parts=[
+    {v:Math.max(sim.invested,0), c:"#8b9088"},
+    {v:Math.max(sim.accReturns,0), c:"#b88a2e"}
+  ];
+  let a=-Math.PI/2;
+  parts.forEach(p=>{
+    const ang=(p.v/total)*Math.PI*2;
+    ctx.beginPath();
+    ctx.arc(cx,cy,rO,a,a+ang);
+    ctx.arc(cx,cy,rI,a+ang,a,true);
+    ctx.closePath(); ctx.fillStyle=p.c; ctx.fill();
+    a+=ang;
+  });
+  // subtle inner ring
+  ctx.beginPath(); ctx.arc(cx,cy,rI,0,Math.PI*2);
+  ctx.strokeStyle="rgba(28,33,28,.06)"; ctx.lineWidth=1; ctx.stroke();
+}
+
+/* ---------- Tooltip on timeline ---------- */
+const tip=document.getElementById("tooltip");
+const tlCanvas=document.getElementById("timeline");
+tlCanvas.addEventListener("mousemove", e=>{
+  if(!tlGeom||!window.__sim) return;
+  const r=tlCanvas.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  const g=tlGeom, sim=window.__sim, s=window.__state;
+  const frac=Math.min(Math.max((x-g.padL)/g.plotW,0),1);
+  const m=Math.round(frac*g.totalM);
+  const p=sim.series[Math.min(m, sim.series.length-1)];
+  if(!p){tip.style.opacity=0;return;}
+  const yr=(p.m/12);
+  const phase = p.phase==="a" ? "Accumulating" : "Drawing down";
+  let html=`<b>Year ${yr.toFixed(1)}</b> · ${phase}<br>Corpus: ${inr(p.bal)}`;
+  if(p.phase==="a") html+=`<br>Invested: ${inr(p.invested)}`;
+  tip.innerHTML=html;
+  tip.style.opacity=1;
+  let tx=g.X(p.m)+12, ty=g.Y(p.bal)-10;
+  if(tx> r.width-150) tx=g.X(p.m)-150;
+  tip.style.left=tx+"px"; tip.style.top=Math.max(ty,4)+"px";
+});
+tlCanvas.addEventListener("mouseleave", ()=> tip.style.opacity=0 );
+
+/* ---------- Wire up inputs ---------- */
+function fmtField(id){
+  const val=state[id];
+  if(moneyFields.has(id)) F[id].box.value=groupIndian(val);
+  else F[id].box.value = (Math.round(val*10)/10).toString();
+  F[id].range.value=val;
+  updateFill(id);
+}
+function updateFill(id){
+  const r=F[id].range;
+  const pct=((r.value-r.min)/(r.max-r.min))*100;
+  if(!r.classList.contains("band")) r.style.setProperty("--fill", pct+"%");
+}
+function commit(id, raw, fromRange){
+  let v = parseFloat(String(raw).replace(/,/g,""));
+  if(isNaN(v)) v = 0;
+  const r=F[id].range;
+  const min=parseFloat(r.min), max=parseFloat(r.max);
+  if(v<min) v=min;
+  if(!fromRange && v>max && !moneyFields.has(id)) v=max; // typed pct/yr clamp to max
+  if(fromRange) v=Math.min(Math.max(v,min),max);
+  state[id]=v;
+  if(id==="swp") swpTouched=true;
+  fmtField(id);
+  render();
+}
+
+ids.forEach(id=>{
+  // range input
+  F[id].range.addEventListener("input", e=>{
+    activeDrag=id;
+    commit(id, e.target.value, true);
+  });
+  F[id].range.addEventListener("change", ()=>{ activeDrag=null; render(); });
+  F[id].range.addEventListener("pointerup", ()=>{ activeDrag=null; });
+  // text box
+  F[id].box.addEventListener("input", e=>{
+    // live: strip to number, update state but don't reformat caret away aggressively
+    let v=parseFloat(String(e.target.value).replace(/,/g,""));
+    if(isNaN(v)) return;
+    const r=F[id].range; const min=parseFloat(r.min);
+    if(v<min) v=min;
+    state[id]=v;
+    if(id==="swp") swpTouched=true;
+    F[id].range.value=Math.min(v, parseFloat(r.max));
+    updateFill(id);
+    render();
+  });
+  F[id].box.addEventListener("blur", e=>{ commit(id, e.target.value, false); });
+  F[id].box.addEventListener("keydown", e=>{ if(e.key==="Enter") F[id].box.blur(); });
+});
+
+// SWP enable/disable toggle
+const swpToggle = document.getElementById("swpToggle");
+swpToggle.checked = state.swpEnabled;
+function applySwpEnabled(){
+  const on = swpToggle.checked;
+  state.swpEnabled = on;
+  ["swpyears","swpstep","swp"].forEach(id=>{ F[id].box.disabled=!on; F[id].range.disabled=!on; });
+  document.getElementById("use_suggest").disabled = !on;
+  render();
+}
+swpToggle.addEventListener("change", applySwpEnabled);
+
+// Mode: SIP→SWP  vs  Lump sum→SWP
+const modeSeg = document.getElementById("modeSeg");
+function applyMode(){
+  const lump = state.mode === "lumpsum";
+  // hide accumulation-only inputs in lump-sum mode
+  ["sip","sipstep","acc"].forEach(id=>{ const c=F[id].box.closest(".ctrl"); if(c) c.style.display = lump ? "none" : ""; });
+  document.getElementById("accTag").innerHTML = lump
+    ? '<span class="dot"></span>Lump sum'
+    : '<span class="dot"></span>Accumulation &middot; SIP';
+  document.querySelector('label[for="holdings"]').textContent = lump ? "Lump sum amount" : "Current holdings";
+  // a lump sum can be large — widen the slider in this mode
+  F.holdings.range.max = lump ? 100000000 : 20000000;
+  document.getElementById("holdings_max_lbl").textContent = lump ? "₹10 Cr" : "₹2 Cr";
+  // SWP is mandatory in lump-sum mode
+  document.getElementById("swpSwitch").style.display = lump ? "none" : "";
+  if(lump){ state.swpEnabled = true; swpToggle.checked = true; }
+  document.getElementById("modeHint").textContent = lump
+    ? "Draw a monthly income directly from a lump sum — no accumulation phase."
+    : "Build a corpus with monthly SIPs, then draw an income from it.";
+  modeSeg.querySelectorAll("button").forEach(b=> b.classList.toggle("on", b.dataset.mode===state.mode));
+  updateFill("holdings");
+  applySwpEnabled();   // re-applies disabled states and re-renders
+}
+modeSeg.querySelectorAll("button").forEach(b=>{
+  b.addEventListener("click", ()=>{ if(state.mode!==b.dataset.mode){ state.mode=b.dataset.mode; applyMode(); } });
+});
+
+// view toggle
+document.querySelectorAll("#view_toggle button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("#view_toggle button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); view=b.dataset.view; render();
+  });
+});
+
+// "Use suggested" SWP
+document.getElementById("use_suggest").addEventListener("click", ()=>{
+  const sim=simulate(state);
+  const band=safeBand(state, sim.corpus);
+  state.swp=Math.round(band.suggested/500)*500;
+  swpTouched=true;
+  // ensure slider max accommodates
+  activeDrag=null;
+  fmtField("swp"); render(); fmtField("swp");
+});
+
+/* ---------- Init ---------- */
+function init(){
+  // first-time: seed SWP with the advisor's suggestion
+  const sim=simulate(state);
+  const band=safeBand(state, sim.corpus);
+  if(!swpTouched && state.swp===0){
+    state.swp=Math.round(band.suggested/500)*500;
+  }
+  ids.forEach(fmtField);
+  applyMode();                // sets mode + disabled states + first render
+  fmtField("swp"); // re-sync after dynamic max set
+}
+init();
+window.addEventListener("resize", ()=>{ render(); Platform.onResize(); });
+
+/* =========================================================================
+   ===  PLATFORM LAYER  ====================================================
+   Goal planner · Retirement/FIRE · Gap analysis · Scenarios · Monte Carlo.
+   Everything below is additive: it reads `state` and calls render(), but the
+   original SIP/SWP code path is untouched.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   SECTION A · SHARED CALCULATION ENGINE
+   Every projection on every tab goes through these functions, so the numbers
+   can never drift between panels. accumulate() is a line-for-line mirror of
+   Act I inside simulate() — contributions land at month end, the step-up is
+   applied after month 12, 24, 36...
+   ------------------------------------------------------------------------- */
+const Engine = {
+  // An annual % compounds to exactly (1+r)^years, matching the main calculator.
+  mRate(retPct){ return Math.pow(1 + retPct/100, 1/12) - 1; },
+
+  // Grow `holdings` while paying in a (optionally stepped) monthly SIP.
+  accumulate({holdings=0, sip=0, sipstep=0, ret=0, years=0}){
+    const i = Engine.mRate(ret), n = Math.round(years*12);
+    let bal = holdings, invested = holdings, cur = sip;
+    for(let m=1;m<=n;m++){
+      bal = bal*(1+i) + cur;
+      invested += cur;
+      if(m%12===0) cur *= (1 + sipstep/100);
+    }
+    return {corpus:bal, invested, gains:bal-invested, lastSip:cur};
+  },
+
+  // Future value is LINEAR in the starting SIP (holdings contribute separately
+  // and additively), so one unit probe inverts it exactly — no search needed,
+  // and the answer is guaranteed consistent with accumulate() to the rupee.
+  requiredSip(target, {holdings=0, sipstep=0, ret=0, years=0}){
+    if(!(target>0)) return 0;
+    const base     = Engine.accumulate({holdings, sip:0, sipstep, ret, years}).corpus;
+    const perRupee = Engine.accumulate({holdings:0, sip:1, sipstep, ret, years}).corpus;
+    if(perRupee<=0) return Infinity;
+    return Math.max((target - base) / perRupee, 0);
+  },
+
+  // Step-up % that makes a given starting SIP reach the target. Not linear in
+  // the step-up, so this bisects; 60 halvings on [0,60] is exact to ~1e-16.
+  requiredStepUp(target, {holdings=0, sip=0, ret=0, years=0}){
+    if(!(sip>0)) return null;
+    const fv = g => Engine.accumulate({holdings, sip, sipstep:g, ret, years}).corpus;
+    if(fv(0)   >= target) return 0;
+    if(fv(60)  <  target) return null;            // unreachable at any sane step-up
+    let lo=0, hi=60;
+    for(let k=0;k<60;k++){ const mid=(lo+hi)/2; if(fv(mid)<target) lo=mid; else hi=mid; }
+    return hi;
+  },
+
+  // Draw a lump sum down with a stepped monthly withdrawal (mirrors Act II).
+  drawdown({corpus=0, swp=0, swpstep=0, ret=0, years=0}){
+    const i = Engine.mRate(ret), n = Math.round(years*12);
+    let bal = corpus, cur = swp, withdrawn = 0, depleted = false;
+    for(let m=1;m<=n;m++){
+      bal = bal*(1+i);
+      const w = Math.min(cur, Math.max(bal,0));
+      bal -= w; withdrawn += w;
+      if(bal<=0.0001){ bal = 0; depleted = true; }
+      if(m%12===0) cur *= (1 + swpstep/100);
+    }
+    return {ending:bal, withdrawn, depleted};
+  },
+
+  // Deterministic PRNG so a given seed always redraws the same distribution.
+  rng(seed){
+    let a = seed>>>0;
+    return function(){
+      a = (a + 0x6D2B79F5)|0;
+      let t = Math.imul(a ^ (a>>>15), 1|a);
+      t = (t + Math.imul(t ^ (t>>>7), 61|t)) ^ t;
+      return ((t ^ (t>>>14))>>>0) / 4294967296;
+    };
+  },
+
+  // Box-Muller: two uniforms in, one standard normal out.
+  normal(rand){
+    let u=0,v=0;
+    while(u===0) u=rand();
+    while(v===0) v=rand();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  },
+
+  percentile(sortedAsc, p){
+    if(!sortedAsc.length) return 0;
+    const idx = (sortedAsc.length-1) * p;
+    const lo = Math.floor(idx), hi = Math.ceil(idx);
+    return lo===hi ? sortedAsc[lo] : sortedAsc[lo] + (sortedAsc[hi]-sortedAsc[lo])*(idx-lo);
+  }
+};
+
+/* -------------------------------------------------------------------------
+   SECTION B · CONTROL FACTORY
+   Emits exactly the .ctrl / .valuebox / range markup the hand-written panels
+   use, so every new input inherits the existing styling for free.
+   ------------------------------------------------------------------------- */
+let ctrlSeq = 0;
+function makeCtrl(host, c){
+  const id = "pc"+(++ctrlSeq);
+  const money = c.unit === "₹";
+  const wrap = document.createElement("div"); wrap.className = "ctrl";
+  const row  = document.createElement("div"); row.className  = "row";
+
+  const lab = document.createElement("label");
+  lab.setAttribute("for", id);
+  lab.innerHTML = c.label + (c.hint ? ` <span class="hint">${c.hint}</span>` : "");
+
+  const vb = document.createElement("div");
+  vb.className = "valuebox" + (c.unit==="%" ? " pct" : "") + (c.unit==="yrs" ? " yr" : "");
+  if(money){ const p=document.createElement("span"); p.className="pre"; p.textContent="₹"; vb.appendChild(p); }
+  const box = document.createElement("input");
+  box.type="text"; box.id=id; box.inputMode = money ? "numeric" : "decimal"; box.autocomplete="off";
+  vb.appendChild(box);
+  if(c.unit==="%" || c.unit==="yrs"){
+    const s=document.createElement("span"); s.className="suf"; s.textContent=c.unit; vb.appendChild(s);
+  }
+  row.append(lab, vb); wrap.appendChild(row);
+
+  const rng = document.createElement("input");
+  rng.type="range"; rng.min=c.min; rng.max=c.max; rng.step=c.step;
+  // the <label for> points at the text box, so the slider needs its own name
+  rng.setAttribute("aria-label", c.label.replace(/<[^>]*>/g,"").trim());
+  wrap.appendChild(rng);
+
+  const marks = document.createElement("div"); marks.className = "scalemarks";
+  const mk = v => money ? inrShort(v) : (v + (c.unit==="yrs" ? (v===1?" yr":" yrs") : c.unit==="%" ? "%" : ""));
+  marks.innerHTML = `<span>${c.minLbl||mk(c.min)}</span><span>${c.maxLbl||mk(c.max)}</span>`;
+  wrap.appendChild(marks);
+  host.appendChild(wrap);
+
+  const api = { value:c.value, el:wrap, box, rng };
+  const paint = ()=>{
+    const pct = ((Math.min(Math.max(api.value,c.min),c.max) - c.min) / (c.max - c.min)) * 100;
+    rng.style.setProperty("--fill", pct+"%");
+  };
+  api.set = (v, silent)=>{
+    v = Math.max(v, c.min);
+    api.value = v;
+    box.value = money ? groupIndian(v) : String(Math.round(v*100)/100);
+    rng.value = Math.min(v, c.max);
+    paint();
+    if(!silent && c.onInput) c.onInput(v);
+  };
+  rng.addEventListener("input", e=> api.set(parseFloat(e.target.value)));
+  box.addEventListener("input", e=>{
+    const v = parseFloat(String(e.target.value).replace(/,/g,""));
+    if(isNaN(v)) return;
+    api.value = Math.max(v, c.min);
+    rng.value = Math.min(api.value, c.max);
+    paint();
+    if(c.onInput) c.onInput(api.value);
+  });
+  box.addEventListener("blur", ()=>{
+    const v = parseFloat(String(box.value).replace(/,/g,""));
+    api.set(isNaN(v) ? c.value : v);
+  });
+  box.addEventListener("keydown", e=>{ if(e.key==="Enter") box.blur(); });
+  api.set(c.value, true);
+  return api;
+}
+
+/* -------------------------------------------------------------------------
+   SECTION C · WORKBENCH SHELL
+   Tab switching. Canvases measure 0×0 while hidden, so each pane redraws on
+   activation rather than on a timer.
+   ------------------------------------------------------------------------- */
+const Platform = {
+  pane: "calc",
+  show(name){
+    Platform.pane = name;
+    document.querySelectorAll(".pane").forEach(p=> p.classList.toggle("on", p.id === "pane-"+name));
+    document.querySelectorAll("#wbSeg button").forEach(b=> b.classList.toggle("on", b.dataset.pane === name));
+    Platform.onResize();
+  },
+  // A hidden pane measures 0×0, so fitText() can't size its numbers and canvases
+  // can't draw. Re-run the pane's own render the moment it becomes visible.
+  onResize(){
+    if(Platform.pane==="calc")  render();
+    if(Platform.pane==="goals") Goals.refresh();
+    if(Platform.pane==="goal")  Goal.refresh();
+    if(Platform.pane==="fire")  Fire.refresh();
+    if(Platform.pane==="scen")  Scenarios.draw();
+    if(Platform.pane==="mc")  { MonteCarlo.draw(); MonteCarlo.renderOut(); }
+  },
+  // Called at the end of every main-calculator render so dependent tabs follow.
+  // Only ever invoked through platformSync, which is assigned after every module
+  // below exists, so these references are always live by the time they run.
+  sync(){
+    Goal.refresh();
+    Fire.refresh();
+    Goals.refresh();          // its verdict compares against the Calculator's SIP
+    MonteCarlo.refreshSource();
+  }
+};
+document.querySelectorAll("#wbSeg button").forEach(b=>{
+  b.addEventListener("click", ()=> Platform.show(b.dataset.pane));
+});
+
+/* -------------------------------------------------------------------------
+   SECTION D0 · GOAL-BASED INVESTMENT
+   Each goal is priced in today's rupees, inflated at ITS OWN rate to its own
+   deadline, then funded by whatever is already set aside plus a monthly SIP.
+   All the heavy lifting reuses Engine.accumulate / Engine.requiredSip, so a
+   goal's SIP is solved on exactly the same month-by-month model as the main
+   calculator.
+   ------------------------------------------------------------------------- */
+const GOAL_COLORS = ["#1d7a53","#c7952f","#3f6fa8","#8a5a9c","#2f8f8f","#b9603a","#5d7a2a","#a04a6b"];
+// Typical Indian planning assumptions — education and healthcare inflate far
+// faster than the headline CPI, which is the whole point of per-goal inflation.
+const GOAL_PRESETS = [
+  {name:"Child's education", cost:2500000, years:15, infl:10, ret:12},
+  {name:"Child's marriage",  cost:2000000, years:18, infl:8,  ret:12},
+  {name:"Home down payment", cost:4000000, years:7,  infl:7,  ret:11},
+  {name:"Car",               cost:1200000, years:4,  infl:6,  ret:9},
+  {name:"Higher studies",    cost:3000000, years:8,  infl:10, ret:11},
+  {name:"World trip",        cost:800000,  years:5,  infl:7,  ret:10},
+  {name:"Emergency fund",    cost:600000,  years:2,  infl:6,  ret:7},
+  {name:"Custom goal",       cost:1000000, years:10, infl:6,  ret:12}
+];
+
+const Goals = {
+  list: [],
+  seq: 0,
+  geom: null,
+
+  init(){
+    const sel = document.getElementById("goalPreset");
+    sel.innerHTML = GOAL_PRESETS.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
+    document.getElementById("goalAdd").addEventListener("click", ()=>{
+      const p = GOAL_PRESETS[+sel.value] || GOAL_PRESETS[0];
+      Goals.add({...p});
+      sel.selectedIndex = Math.min(sel.selectedIndex+1, GOAL_PRESETS.length-1);
+    });
+    // --- pooled vs earmarked savings ---
+    document.querySelectorAll("#fundModeSeg button").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        Goals.fund.mode = b.dataset.fmode;
+        document.querySelectorAll("#fundModeSeg button").forEach(x=> x.classList.toggle("on", x===b));
+        Goals.build();          // the "Allocated" cell changes between input and read-out
+      });
+    });
+    const poolBox = document.getElementById("fundPool");
+    poolBox.value = groupIndian(Goals.fund.pool);
+    poolBox.addEventListener("input", ()=>{
+      const v = parseFloat(String(poolBox.value).replace(/,/g,""));
+      if(!isNaN(v)){ Goals.fund.pool = Math.max(v,0); Goals.refresh(); }
+    });
+    poolBox.addEventListener("blur", ()=>{ poolBox.value = groupIndian(Goals.fund.pool); });
+    poolBox.addEventListener("keydown", e=>{ if(e.key==="Enter") poolBox.blur(); });
+    document.getElementById("fundStrategy").addEventListener("change", e=>{
+      Goals.fund.strategy = e.target.value; Goals.refresh();
+    });
+
+    // click-to-sort on the numeric columns
+    document.querySelectorAll("#goalTable th.sortable").forEach(th=>{
+      th.addEventListener("click", ()=>{
+        const k = th.dataset.sort;
+        Goals.sort = {key:k, dir: Goals.sort.key===k ? -Goals.sort.dir : 1};
+        document.querySelectorAll("#goalTable th.sortable").forEach(o=>{
+          o.classList.toggle("asc",  o===th && Goals.sort.dir>0);
+          o.classList.toggle("desc", o===th && Goals.sort.dir<0);
+        });
+        Goals.build();
+      });
+    });
+    // start with a realistic three-goal plan rather than an empty screen
+    Goals.add({...GOAL_PRESETS[0]});
+    Goals.add({...GOAL_PRESETS[2], saved:500000});
+    Goals.add({...GOAL_PRESETS[3]});
+    Goals.attachTip();
+  },
+
+  add(g){
+    if(Goals.list.length >= 8) return;
+    Goals.list.push({id:++Goals.seq, name:g.name, cost:g.cost, years:g.years,
+                     infl:g.infl, ret:g.ret, saved:g.saved||0});
+    Goals.build();
+  },
+  remove(id){
+    Goals.list = Goals.list.filter(g=>g.id!==id);
+    Goals.build();
+  },
+
+  // How the money you already have is held. In reality most people keep one
+  // pool (MF + stocks + FD) rather than a folio per goal, so that is the default.
+  fund: { mode:"pooled", pool:500000, strategy:"nearest", left:0 },
+
+  // The lump sum needed TODAY to fully fund a goal on its own.
+  pvOf(g){ return (g.cost*Math.pow(1+g.infl/100,g.years)) / Math.pow(1+g.ret/100,g.years); },
+
+  // Split the shared pool across goals and write the result to g.alloc.
+  //
+  // "nearest first" is the default because it provably needs the least total
+  // SIP: a rupee parked against a near goal displaces more monthly contribution
+  // than the same rupee against a distant one (fewer months to spread over).
+  // It also matches how advisers sequence funding — a goal four years out has
+  // no time to recover from a shortfall, a goal fifteen years out does.
+  allocate(){
+    const f = Goals.fund;
+    if(f.mode !== "pooled"){
+      Goals.list.forEach(g=> g.alloc = g.saved);
+      f.left = 0;
+      return;
+    }
+    Goals.list.forEach(g=> g.alloc = 0);
+    let rem = Math.max(f.pool, 0);
+
+    if(f.strategy === "nearest"){
+      [...Goals.list].sort((a,b)=> a.years-b.years).forEach(g=>{
+        const give = Math.min(rem, Goals.pvOf(g));
+        g.alloc = give; rem -= give;
+      });
+    }else{
+      // Proportional to each goal's present-value need. A goal that would be
+      // over-funded is capped and its excess re-spread over the rest.
+      let open = Goals.list.slice();
+      for(let pass=0; pass<8 && rem>0.01 && open.length; pass++){
+        const need = open.map(g=> Math.max(Goals.pvOf(g)-g.alloc, 0));
+        const tot  = need.reduce((a,b)=>a+b,0);
+        if(tot<=0.01) break;
+        const next=[]; let spent=0;
+        open.forEach((g,i)=>{
+          let give = rem*need[i]/tot;
+          if(give >= need[i]) give = need[i]; else next.push(g);
+          g.alloc += give; spent += give;
+        });
+        rem -= spent; open = next;
+      }
+    }
+    f.left = Math.max(rem, 0);
+  },
+
+  // ---- the maths, one goal at a time ----
+  compute(g){
+    const saved  = Goals.fund.mode === "pooled" ? (g.alloc||0) : g.saved;
+    const future = g.cost * Math.pow(1 + g.infl/100, g.years);          // tomorrow's price
+    const funded = Engine.accumulate({holdings:saved, sip:0, sipstep:0,
+                                      ret:g.ret, years:g.years}).corpus; // what today's savings become
+    const gap    = Math.max(future - funded, 0);
+    const sip    = Engine.requiredSip(future, {holdings:saved, sipstep:0,
+                                               ret:g.ret, years:g.years});
+    const lumpToday = Math.max(future/Math.pow(1+g.ret/100, g.years) - saved, 0);
+    return {future, funded, gap, sip, lumpToday, saved,
+            covered: future>0 ? Math.min(funded/future,1) : 1};
+  },
+
+  sort: {key:null, dir:1},
+
+  // Goals keep their insertion colour regardless of sort order, so a row's dot
+  // always matches the same goal on the chart.
+  colorOf(g){ return GOAL_COLORS[Goals.list.indexOf(g) % GOAL_COLORS.length]; },
+
+  ordered(){
+    const {key, dir} = Goals.sort;
+    if(!key) return Goals.list.slice();
+    const pick = g => key==="cost" ? g.cost : key==="years" ? g.years
+                    : key==="future" ? g.r.future : g.r.sip;
+    return Goals.list.slice().sort((a,b)=> (pick(a)-pick(b))*dir);
+  },
+
+  build(){
+    const body = document.getElementById("goalBody");
+    const foot = document.getElementById("goalFoot");
+    body.innerHTML = ""; foot.innerHTML = "";
+    if(!Goals.list.length){
+      body.innerHTML = `<tr><td class="goal-empty" colspan="10">No goals yet — pick one above and press <b>+ Add goal</b>.</td></tr>`;
+      Goals.refresh();
+      return;
+    }
+    Goals.allocate();
+    Goals.list.forEach(g=> g.r = Goals.compute(g));   // sorting may need computed values
+
+    Goals.ordered().forEach(g=>{
+      const tr = document.createElement("tr");
+      tr.style.setProperty("--gc", Goals.colorOf(g));
+      tr.innerHTML =
+        `<td class="c-name"><span class="goal-dot"></span><input class="goal-name" aria-label="Goal name"></td>
+         <td data-label="Cost today"></td>
+         <td data-label="Years"></td>
+         <td data-label="Inflation"></td>
+         <td data-label="Return"></td>
+         <td data-label="Already saved"></td>
+         <td class="calc cost g-future" data-label="Cost when due">—</td>
+         <td class="calc sip g-sip" data-label="Monthly SIP">—</td>
+         <td class="calc lump g-lump" data-label="Or lump sum today">—</td>
+         <td class="c-act"><button class="goal-del" title="Remove this goal">&times;</button></td>`;
+      body.appendChild(tr);
+      g.row = tr;
+
+      const cells = tr.querySelectorAll("td");
+      const nameBox = tr.querySelector(".goal-name");
+      nameBox.value = g.name;
+      nameBox.addEventListener("input", e=>{ g.name = e.target.value || "Goal"; Goals.refresh(); });
+
+      makeCellInput(cells[1], {label:"Cost today", unit:"₹", value:g.cost,
+        onInput:v=>{ g.cost=v; Goals.refresh(); }});
+      makeCellInput(cells[2], {label:"Years to go", unit:"yrs", value:g.years, min:1, max:40,
+        onInput:v=>{ g.years=Math.max(Math.round(v),1); Goals.refresh(); }});
+      makeCellInput(cells[3], {label:"Inflation", unit:"%", value:g.infl, max:20,
+        onInput:v=>{ g.infl=v; Goals.refresh(); }});
+      makeCellInput(cells[4], {label:"Expected return", unit:"%", value:g.ret, min:1, max:30,
+        onInput:v=>{ g.ret=v; Goals.refresh(); }});
+      // Pooled: the cell shows this goal's share of the shared pool (read-only).
+      // Earmarked: it is an editable per-goal balance.
+      if(Goals.fund.mode === "pooled"){
+        const box=document.createElement("span");
+        box.className="alloc"; box.innerHTML=`<span class="av"></span><span class="ap"></span>`;
+        cells[5].appendChild(box);
+      }else{
+        makeCellInput(cells[5], {label:"Already saved", unit:"₹", value:g.saved,
+          onInput:v=>{ g.saved=v; Goals.refresh(); }});
+      }
+
+      tr.querySelector(".goal-del").addEventListener("click", ()=> Goals.remove(g.id));
+    });
+
+    foot.innerHTML =
+      `<tr>
+         <td class="c-name" id="gf_label">—</td>
+         <td data-label="Cost today" id="gf_cost">—</td>
+         <td data-label="Years"></td><td data-label="Inflation"></td><td data-label="Return"></td>
+         <td data-label="Already saved" id="gf_saved">—</td>
+         <td class="calc cost" data-label="Cost when due" id="gf_future">—</td>
+         <td class="calc sip" data-label="Monthly SIP" id="gf_sip">—</td>
+         <td class="calc lump" data-label="Or lump sum today" id="gf_lump">—</td>
+         <td class="c-act"></td>
+       </tr>`;
+    Goals.refresh();
+  },
+
+  refresh(){
+    Goals.allocate();
+    const pooled = Goals.fund.mode === "pooled";
+    document.getElementById("fundPoolWrap").style.display  = pooled ? "" : "none";
+    document.getElementById("fundStratWrap").style.display = pooled ? "" : "none";
+    document.getElementById("th_saved").textContent = pooled ? "Allocated" : "Already saved";
+
+    let totSip=0, totFuture=0, totFunded=0, nearest=null;
+    Goals.list.forEach(g=>{
+      const r = Goals.compute(g);
+      g.r = r;
+      if(pooled && g.row){
+        const box = g.row.querySelector(".alloc");
+        if(box){
+          const share = Goals.pvOf(g)>0 ? Math.min(r.saved/Goals.pvOf(g),1) : 1;
+          box.classList.toggle("none", r.saved<1);
+          box.querySelector(".av").textContent = r.saved>=1 ? inr(r.saved) : "—";
+          box.querySelector(".ap").textContent = r.saved>=1 ? `covers ${(share*100).toFixed(0)}%` : "not funded";
+          box.title = r.saved>=1
+            ? `${inr(r.saved)} of your pool is working toward this goal`
+            : `The pool ran out before this goal — it is funded entirely by SIP`;
+        }
+      }
+      totSip += r.sip; totFuture += r.future; totFunded += r.funded;
+      if(!nearest || g.years < nearest.years) nearest = g;
+      if(!g.row) return;
+      const fut = g.row.querySelector(".g-future");
+      const sip = g.row.querySelector(".g-sip");
+      const lmp = g.row.querySelector(".g-lump");
+      fut.textContent = inr(r.future);
+      fut.title = `${inrShort(g.cost)} today at ${g.infl}% inflation for ${g.years} years`;
+      sip.textContent = r.sip>0 ? inr(r.sip) : "Funded";
+      sip.classList.toggle("funded", r.sip<=0);
+      sip.title = r.sip>0
+        ? `Invested at ${g.ret}% for ${g.years} years, this reaches ${inr(r.future)}`
+        : `Your ${inrShort(g.saved)} already grows to ${inrShort(r.funded)} — more than needed`;
+      lmp.textContent = r.lumpToday>0 ? inr(r.lumpToday) : "—";
+      lmp.title = r.lumpToday>0 ? `A one-time investment today instead of the monthly SIP` : "";
+    });
+
+    // totals row — the column sums a spreadsheet user reaches for
+    // funding note beside the pool control
+    const fn = document.getElementById("fundNote");
+    if(fn){
+      if(!pooled){
+        fn.innerHTML = `Each goal keeps its own balance. Total earmarked: <b>${inr(Goals.list.reduce((a,g)=>a+g.saved,0))}</b>.`;
+      }else if(!Goals.list.length){
+        fn.innerHTML = `Add a goal and your pool will be put to work.`;
+      }else{
+        const used = Goals.list.reduce((a,g)=>a+(g.alloc||0),0);
+        const covered = Goals.list.filter(g=>g.r.sip<=0).length;
+        fn.innerHTML = `<b>${inr(used)}</b> of your pool is allocated`
+          + (covered ? ` — ${covered} goal${covered===1?"":"s"} fully covered` : ``)
+          + (Goals.fund.left>1 ? `. <span class="spare">${inr(Goals.fund.left)} spare</span> — every goal is already funded.` : `.`);
+      }
+    }
+
+    if(Goals.list.length && document.getElementById("gf_sip")){
+      const totCost  = Goals.list.reduce((a,g)=>a+g.cost,0);
+      const totSaved = Goals.list.reduce((a,g)=>a+(pooled ? (g.alloc||0) : g.saved),0);
+      const totLump  = Goals.list.reduce((a,g)=>a+g.r.lumpToday,0);
+      document.getElementById("gf_label").textContent  = `Total · ${Goals.list.length} goal${Goals.list.length===1?"":"s"}`;
+      document.getElementById("gf_cost").textContent   = inr(totCost);
+      document.getElementById("gf_saved").textContent  = inr(totSaved);
+      document.getElementById("gf_future").textContent = inr(totFuture);
+      document.getElementById("gf_sip").textContent    = inr(totSip);
+      document.getElementById("gf_lump").textContent   = inr(totLump);
+    }
+
+    setNum("gs_sip", inr(totSip));
+    setNum("gs_future", inr(totFuture));
+    setNum("gs_funded", inr(Math.min(totFunded, totFuture)));
+    document.getElementById("gs_count").textContent = Goals.list.length;
+    document.getElementById("gs_count_sub").textContent = nearest
+      ? `nearest: ${nearest.name} in ${nearest.years} yrs` : "none yet";
+    document.getElementById("gs_funded_sub").textContent = totFuture>0
+      ? `${(Math.min(totFunded/totFuture,1)*100).toFixed(0)}% of everything you need` : "—";
+    document.getElementById("gs_sip_sub").textContent =
+      `across ${Goals.list.length} goal${Goals.list.length===1?"":"s"}`;
+
+    // Is the combined ask realistic next to what they already invest?
+    const v  = document.getElementById("goals_verdict");
+    const vt = document.getElementById("goals_verdict_txt");
+    const cur = state.sip;
+    if(!Goals.list.length){
+      v.className="verdict warn"; v.querySelector(".ico").style.color="var(--warn)";
+      vt.textContent = "Add a goal to see what it takes to fund it.";
+    }else if(totSip<=cur){
+      v.className="verdict good"; v.querySelector(".ico").style.color="var(--good)";
+      vt.textContent = `Comfortable — ${inr(totSip)}/mo funds every goal, within your current ${inrShort(cur)}/mo SIP.`;
+    }else if(totSip<=cur*1.5){
+      v.className="verdict warn"; v.querySelector(".ico").style.color="var(--warn)";
+      vt.textContent = `A stretch — these goals need ${inr(totSip)}/mo against your current ${inrShort(cur)}/mo. You're short ${inrShort(totSip-cur)}/mo.`;
+    }else{
+      v.className="verdict bad"; v.querySelector(".ico").style.color="var(--bad)";
+      vt.textContent = `Over-committed — ${inr(totSip)}/mo is ${(totSip/Math.max(cur,1)).toFixed(1)}× your current SIP. Push the further goals out, or trim their cost.`;
+    }
+
+    document.getElementById("goals_chart_note").textContent = nearest
+      ? `${Goals.list.length} goals over ${Math.max(...Goals.list.map(g=>g.years))} years` : "";
+    Goals.draw();
+  },
+
+  // Horizontal bars, soonest goal first: length = cost at maturity, split into
+  // what today's savings already cover and what still has to be invested.
+  draw(){
+    const cv = document.getElementById("goalsChart");
+    const wrap = document.getElementById("goalsChartWrap");
+    const rows = [...Goals.list].sort((a,b)=>a.years-b.years);
+    if(wrap) wrap.style.height = Math.max(rows.length*46 + 56, 170) + "px";
+    const {ctx,w,h} = setupCanvas(cv);
+    if(w<=0||h<=0) return;
+    ctx.clearRect(0,0,w,h);
+    if(!rows.length){ Goals.geom=null; return; }
+
+    const padL=Math.min(170, w*0.32), padR=22, padT=10, padB=30;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+    const maxV = Math.max(...rows.map(g=>g.r.future), 1);
+    const ax = niceTicks(maxV, 4);
+    const X = v => padL + (v/ax.top)*plotW;
+    const rowH = plotH/rows.length, barH = Math.min(rowH*0.56, 24);
+
+    // vertical gridlines + value axis
+    ctx.font="11px 'Hanken Grotesk', sans-serif";
+    ax.ticks.forEach(t=>{
+      const x=X(t);
+      ctx.strokeStyle = t===0 ? "rgba(13,27,22,.18)" : "rgba(13,27,22,.07)";
+      ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+      ctx.fillStyle="#78867f"; ctx.textBaseline="top";
+      ctx.textAlign = t===0 ? "left" : (t===ax.top ? "right" : "center");
+      ctx.fillText(inrShort(t), x, padT+plotH+9);
+    });
+
+    rows.forEach((g,i)=>{
+      const cy = padT + rowH*i + rowH/2;
+      const y  = cy - barH/2;
+      const fundedW = Math.max(X(Math.min(g.r.funded, g.r.future)) - padL, 0);
+      const totalW  = Math.max(X(g.r.future) - padL, 1);
+
+      // Two fixed colours matching the legend — NOT the per-goal hue, or a brass
+      // goal's funded segment would be indistinguishable from the unfunded fill.
+      ctx.fillStyle = "rgba(184,138,46,.55)";       // still to invest
+      ctx.fillRect(padL, y, totalW, barH);
+      if(fundedW>1){ ctx.fillStyle = "#1d7a53";     // already funded
+        ctx.fillRect(padL, y, fundedW, barH); }
+      // 2px surface gap so adjacent bars never touch
+      ctx.strokeStyle="#fff"; ctx.lineWidth=2; ctx.strokeRect(padL, y, totalW, barH);
+
+      // goal name + year, right-aligned into the gutter
+      ctx.fillStyle="#0d1b16"; ctx.font="600 12px 'Hanken Grotesk',sans-serif";
+      ctx.textAlign="right"; ctx.textBaseline="middle";
+      const nm = g.name.length>20 ? g.name.slice(0,19)+"…" : g.name;
+      ctx.fillText(nm, padL-14, cy-6);
+      ctx.fillStyle="#78867f"; ctx.font="11px 'Hanken Grotesk',sans-serif";
+      ctx.fillText(`in ${g.years} yr${g.years===1?"":"s"} · ${inrShort(g.r.sip)}/mo`, padL-14, cy+8);
+
+      // value at the bar end
+      ctx.fillStyle="#4a5751"; ctx.font="700 11px 'Hanken Grotesk',sans-serif";
+      ctx.textAlign="left"; ctx.textBaseline="middle";
+      if(padL+totalW+70 < w) ctx.fillText(inrShort(g.r.future), padL+totalW+8, cy);
+    });
+
+    Goals.geom={padL,padT,plotH,rowH,rows,X};
+  },
+
+  attachTip(){
+    const cv=document.getElementById("goalsChart"), tip=document.getElementById("goalsTip");
+    cv.addEventListener("mousemove", e=>{
+      const g=Goals.geom;
+      if(!g){ tip.style.opacity=0; return; }
+      const rc=cv.getBoundingClientRect();
+      const i=Math.floor((e.clientY-rc.top-g.padT)/g.rowH);
+      if(i<0||i>=g.rows.length){ tip.style.opacity=0; return; }
+      const go=g.rows[i];
+      // The goal name is user-typed, so it is escaped before it reaches innerHTML.
+      tip.innerHTML=`<b>${esc(go.name)}</b><br>Needs ${inr(go.r.future)} in ${go.years} yrs`
+        + `<br>SIP ${inr(go.r.sip)}/mo · or ${inr(go.r.lumpToday)} today`;
+      tip.style.opacity=1;
+      let tx=e.clientX-rc.left+14; if(tx>rc.width-230) tx=rc.width-230;
+      tip.style.left=Math.max(tx,4)+"px";
+      tip.style.top=Math.min(g.padT+g.rowH*i+g.rowH, rc.height-70)+"px";
+    });
+    cv.addEventListener("mouseleave", ()=> tip.style.opacity=0);
+  }
+};
+
+/* A spreadsheet-style numeric cell: no visible chrome until hovered or focused.
+   The column header (or the stacked-view data-label) supplies the name, so the
+   input carries only an aria-label. */
+function makeCellInput(host, c){
+  const money = c.unit === "₹";
+  const vb = document.createElement("span");
+  vb.className = "cellbox" + (c.unit==="%" ? " pct" : "") + (c.unit==="yrs" ? " yr" : "");
+  if(money){ const p=document.createElement("span"); p.className="pre"; p.textContent="₹"; vb.appendChild(p); }
+  const box = document.createElement("input");
+  box.type="text"; box.inputMode = money ? "numeric" : "decimal"; box.autocomplete="off";
+  box.setAttribute("aria-label", c.label);
+  vb.appendChild(box);
+  if(c.unit==="%" || c.unit==="yrs"){
+    const s=document.createElement("span"); s.className="suf"; s.textContent=c.unit; vb.appendChild(s);
+  }
+  host.appendChild(vb);
+
+  const fmt = v => money ? groupIndian(v) : String(Math.round(v*100)/100);
+  box.value = fmt(c.value);
+  const read = () => {
+    let v = parseFloat(String(box.value).replace(/,/g,""));
+    if(isNaN(v)) v = 0;
+    return Math.min(Math.max(v, c.min ?? 0), c.max ?? Infinity);
+  };
+  box.addEventListener("input", ()=>{ if(String(box.value).trim()!=="") c.onInput(read()); });
+  box.addEventListener("blur",  ()=>{ const v=read(); box.value=fmt(v); c.onInput(v); });
+  box.addEventListener("keydown", e=>{ if(e.key==="Enter") box.blur(); });
+  return {box};
+}
+
+/* -------------------------------------------------------------------------
+   SECTION D · FEATURE 1 — TARGET CORPUS PLANNER
+   Solves backwards from a corpus goal to the SIP that funds it, under two
+   strategies, and reports which costs less capital overall.
+   ------------------------------------------------------------------------- */
+const Goal = {
+  s: { target:50000000, years:20, ret:12, step:10, mode:"fixed", offset:true },
+  c: {},
+
+  init(){
+    const host = document.getElementById("goalCtrls");
+    Goal.c.target = makeCtrl(host, {label:"Target corpus", unit:"₹", min:100000, max:250000000,
+      step:100000, value:Goal.s.target, onInput:v=>{ Goal.s.target=v; Goal.refresh(); }});
+    Goal.c.years  = makeCtrl(host, {label:"Investment horizon", unit:"yrs", min:1, max:40, step:1,
+      value:Goal.s.years, onInput:v=>{ Goal.s.years=Math.round(v); Goal.refresh(); }});
+    Goal.c.ret    = makeCtrl(host, {label:"Expected return", hint:"p.a., nominal", unit:"%", min:1, max:30,
+      step:0.5, value:Goal.s.ret, onInput:v=>{ Goal.s.ret=v; Goal.refresh(); }});
+    Goal.c.step   = makeCtrl(document.getElementById("goalStepCtrl"), {label:"Annual SIP step-up",
+      hint:"raise your SIP yearly", unit:"%", min:1, max:25, step:0.5, value:Goal.s.step,
+      onInput:v=>{ Goal.s.step=v; Goal.refresh(); }});
+
+    document.querySelectorAll("#goalModeSeg button").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        Goal.s.mode = b.dataset.gmode;
+        document.querySelectorAll("#goalModeSeg button").forEach(x=> x.classList.toggle("on", x===b));
+        Goal.refresh();
+      });
+    });
+    document.getElementById("goalOffset").addEventListener("change", e=>{
+      Goal.s.offset = e.target.checked; Goal.refresh();
+    });
+    document.getElementById("goal_use").addEventListener("click", Goal.apply);
+    Goal.refresh();
+  },
+
+  // Both strategies costed against the same goal, so they can be compared.
+  solve(){
+    const {target, years, ret, step, offset} = Goal.s;
+    const holdings = offset ? state.holdings : 0;
+    const base = { holdings, ret, years };
+    const fixedSip = Engine.requiredSip(target, {...base, sipstep:0});
+    const stepSip  = Engine.requiredSip(target, {...base, sipstep:step});
+    return {
+      holdings,
+      fixed:{ sip:fixedSip, step:0,
+              total:Engine.accumulate({...base, sip:fixedSip, sipstep:0}).invested - holdings },
+      step: { sip:stepSip, step,
+              total:Engine.accumulate({...base, sip:stepSip, sipstep:step}).invested - holdings }
+    };
+  },
+
+  refresh(){
+    const r = Goal.solve();
+    const pick = Goal.s.mode === "step" ? r.step : r.fixed;
+    Goal.c.step.el.style.display = Goal.s.mode === "step" ? "" : "none";
+
+    document.getElementById("goalOffsetLbl").textContent =
+      `Count my current holdings (${inrShort(state.holdings)})`;
+    document.getElementById("goal_basis").textContent =
+      `${inrShort(Goal.s.target)} in ${Goal.s.years} yrs @ ${Goal.s.ret}%`;
+
+    setNum("g_sip", isFinite(pick.sip) ? inr(pick.sip) : "—");
+    document.getElementById("g_sip_sub").textContent =
+      Goal.s.mode === "step" ? `then +${Goal.s.step}% a year` : "flat, every month";
+    document.getElementById("g_step").textContent  = Goal.s.mode === "step" ? Goal.s.step+"%" : "0%";
+    setNum("g_total", inr(pick.total));
+
+    // capital-efficiency comparison
+    document.getElementById("vsf_sip").textContent   = inr(r.fixed.sip);
+    document.getElementById("vsf_total").textContent = "Total in: "+inrShort(r.fixed.total);
+    document.getElementById("vss_sip").textContent   = inr(r.step.sip);
+    document.getElementById("vss_total").textContent = "Total in: "+inrShort(r.step.total);
+    const fixedWins = r.fixed.total <= r.step.total;
+    const vf = document.getElementById("vs_fixed"), vs = document.getElementById("vs_step");
+    vf.className = "side" + (fixedWins ? " win" : "");
+    vs.className = "side" + (fixedWins ? "" : " win");
+    vf.querySelector(".winbadge")?.remove();
+    vs.querySelector(".winbadge")?.remove();
+    const badge = document.createElement("div");
+    badge.className = "winbadge"; badge.textContent = "More efficient";
+    (fixedWins ? vf : vs).appendChild(badge);
+
+    const diff = Math.abs(r.step.total - r.fixed.total);
+    const lighter = Math.max(r.fixed.sip - r.step.sip, 0);
+    document.getElementById("goal_verdict").innerHTML = fixedWins
+      ? `A <b>flat SIP puts in ${inrShort(diff)} less overall</b> — early rupees compound longest, so front-loading is cheaper. Stepping up starts ${inrShort(lighter)}/mo lighter, which buys affordability, not efficiency.`
+      : `Stepping up puts in <b>${inrShort(diff)} less overall</b> here and starts ${inrShort(lighter)}/mo lighter.`;
+
+    // is the ask realistic against what they're doing today?
+    const v = document.getElementById("goal_feas"), vt = document.getElementById("goal_feas_txt");
+    const ratio = state.sip>0 ? pick.sip/state.sip : Infinity;
+    if(pick.sip<=0){
+      v.className="verdict good"; v.querySelector(".ico").style.color="var(--good)";
+      vt.textContent = "Your current holdings alone reach this target — no fresh SIP required.";
+    }else if(ratio<=1.05){
+      v.className="verdict good"; v.querySelector(".ico").style.color="var(--good)";
+      vt.textContent = `Within reach — that's about your current ${inrShort(state.sip)}/mo SIP.`;
+    }else if(ratio<=2){
+      v.className="verdict warn"; v.querySelector(".ico").style.color="var(--warn)";
+      vt.textContent = `A stretch — ${(ratio).toFixed(1)}× your current ${inrShort(state.sip)}/mo SIP.`;
+    }else{
+      v.className="verdict bad"; v.querySelector(".ico").style.color="var(--bad)";
+      vt.textContent = `Demanding — ${(ratio).toFixed(1)}× your current SIP. Consider a longer horizon or a smaller target.`;
+    }
+    document.getElementById("goal_use_note").textContent =
+      `Sets SIP, step-up, return and a ${Goal.s.years}-yr accumulation on the Calculator.`;
+  },
+
+  apply(){
+    const r = Goal.solve();
+    const pick = Goal.s.mode === "step" ? r.step : r.fixed;
+    if(!isFinite(pick.sip)) return;
+    state.sip     = Math.round(pick.sip);
+    state.sipstep = Goal.s.mode === "step" ? Goal.s.step : 0;
+    state.ret     = Goal.s.ret;
+    state.acc     = Goal.s.years;
+    if(state.sip > parseFloat(F.sip.range.max)) F.sip.range.max = Math.ceil(state.sip/50000)*50000;
+    ["sip","sipstep","ret","acc"].forEach(fmtField);
+    render();
+    Platform.show("calc");
+  }
+};
+
+/* -------------------------------------------------------------------------
+   SECTION E · FEATURES 2 & 3 — RETIREMENT / FIRE + GAP ANALYSIS
+   Required corpus = (today's expenses inflated to retirement) / withdrawal rate.
+   Projected corpus reuses the Calculator's own inputs, compounded to the
+   retirement date, so the two tabs can never disagree.
+   ------------------------------------------------------------------------- */
+const Fire = {
+  s: { age:32, retAge:60, expense:80000, infl:6, wr:4, addStep:10 },
+  c: {},
+  last: null,
+
+  init(){
+    const host = document.getElementById("fireCtrls");
+    Fire.c.age     = makeCtrl(host, {label:"Current age", unit:"yrs", min:18, max:70, step:1,
+      value:Fire.s.age, onInput:v=>{ Fire.s.age=Math.round(v); Fire.guard("age"); }});
+    Fire.c.retAge  = makeCtrl(host, {label:"Retirement age", unit:"yrs", min:30, max:75, step:1,
+      value:Fire.s.retAge, onInput:v=>{ Fire.s.retAge=Math.round(v); Fire.guard("ret"); }});
+    Fire.c.expense = makeCtrl(host, {label:"Current monthly expenses", hint:"in today's money", unit:"₹",
+      min:5000, max:1000000, step:1000, value:Fire.s.expense, onInput:v=>{ Fire.s.expense=v; Fire.refresh(); }});
+    Fire.c.infl    = makeCtrl(host, {label:"Inflation", hint:"drives your future cost of living", unit:"%",
+      min:0, max:12, step:0.5, value:Fire.s.infl, onInput:v=>{ Fire.s.infl=v; Fire.refresh(); }});
+    Fire.c.wr      = makeCtrl(host, {label:"Withdrawal rate", hint:"the 4% rule", unit:"%", min:2, max:10,
+      step:0.25, value:Fire.s.wr, onInput:v=>{ Fire.s.wr=v; Fire.refresh(); }});
+    Fire.c.addStep = makeCtrl(host, {label:"Yearly raise on the top-up SIP",
+      hint:"only affects the “with step-up” option below — set it to how fast your income grows",
+      unit:"%", min:0, max:25, step:0.5, value:Fire.s.addStep,
+      onInput:v=>{ Fire.s.addStep=v; Fire.refresh(); }});
+
+    document.getElementById("gap_apply").addEventListener("click", Fire.applyGap);
+    Fire.refresh();
+  },
+
+  // Retirement age must stay above current age or the horizon goes negative.
+  guard(which){
+    if(Fire.s.retAge <= Fire.s.age){
+      if(which==="age") Fire.c.retAge.set(Fire.s.age+1, true), Fire.s.retAge = Fire.s.age+1;
+      else              Fire.c.age.set(Fire.s.retAge-1, true), Fire.s.age = Fire.s.retAge-1;
+    }
+    Fire.refresh();
+  },
+
+  compute(){
+    const {age, retAge, expense, infl, wr} = Fire.s;
+    const years   = Math.max(retAge - age, 0);
+    const mExp    = expense * Math.pow(1 + infl/100, years);   // monthly cost at retirement
+    const aExp    = mExp * 12;
+    const required= wr>0 ? aExp / (wr/100) : Infinity;         // the 4% rule, generalised
+    // Projected: the Calculator's own plan, run to the retirement date.
+    const proj    = Engine.accumulate({holdings:state.holdings, sip:state.sip,
+                                       sipstep:state.sipstep, ret:state.ret, years});
+    const gap     = required - proj.corpus;
+    return {years, mExp, aExp, required, projected:proj.corpus, invested:proj.invested, gap,
+            ratio: required>0 ? proj.corpus/required : 1};
+  },
+
+  refresh(){
+    const r = Fire.compute(); Fire.last = r;
+    document.getElementById("fire_years").textContent = `${r.years} yrs to retirement`;
+    setNum("f_mexp", inr(r.mExp));
+    document.getElementById("f_mexp_sub").textContent =
+      `${inrShort(Fire.s.expense)} today, at ${Fire.s.infl}% for ${r.years} yrs`;
+    setNum("f_aexp", inr(r.aExp));
+    setNum("f_req", inr(r.required));
+    document.getElementById("f_req_sub").textContent = `${Fire.s.wr}% withdrawal rate`;
+    setNum("f_yrs", r.years + (r.years===1?" yr":" yrs"));
+    document.getElementById("fire_src").textContent =
+      `${inrShort(state.holdings)} holdings + ${inrShort(state.sip)}/mo` +
+      (state.sipstep>0 ? ` stepping ${state.sipstep}%` : ``) + ` @ ${state.ret}%`;
+
+    // ---- gap analysis ----
+    setNum("gp_req",  inr(r.required));
+    setNum("gp_proj", inr(r.projected));
+    document.getElementById("gp_proj_sub").textContent = `at age ${Fire.s.retAge}`;
+
+    const short = r.gap > 0;
+    const gapTile = document.getElementById("gp_gap_tile");
+    gapTile.className = "tile " + (short ? "bad" : "good");
+    document.getElementById("gp_gap_k").textContent = short ? "Corpus gap" : "Corpus surplus";
+    setNum("gp_gap", inr(Math.abs(r.gap)));
+    document.getElementById("gp_gap_sub").textContent = short
+      ? `${(r.ratio*100).toFixed(0)}% of the way there`
+      : `${(r.ratio*100).toFixed(0)}% of what you need`;
+
+    // progress track: projected as a share of required
+    const pct = Math.min(Math.max(r.ratio,0),1)*100;
+    const fill = document.getElementById("gap_fill");
+    fill.style.width = pct+"%";
+    fill.style.background = r.ratio>=1 ? "rgba(47,125,84,.35)"
+                          : r.ratio>=0.75 ? "rgba(194,144,31,.35)" : "rgba(188,79,44,.30)";
+
+    const chip = document.getElementById("gap_chip");
+    const ct   = document.getElementById("gap_chip_txt");
+    if(r.ratio>=1){      chip.className="chip good"; ct.textContent="✅ On Track"; }
+    else if(r.ratio>=0.75){ chip.className="chip warn"; ct.textContent="⚠ Behind Target"; }
+    else {               chip.className="chip bad";  ct.textContent="❌ Major Retirement Gap"; }
+
+    document.getElementById("gap_fix").style.display = short ? "" : "none";
+    document.getElementById("gap_ok").style.display  = short ? "none" : "";
+    if(short){
+      // Both figures are sized as a SEPARATE top-up stream alongside the current
+      // SIP: one flat, one rising at the catch-up step-up. Neither inherits the
+      // plan's own step-up, which is what makes them comparable to each other.
+      const base = {holdings:0, ret:state.ret, years:r.years};
+      const addFlat = Engine.requiredSip(r.gap, {...base, sipstep:0});
+      const addStep = Engine.requiredSip(r.gap, {...base, sipstep:Fire.s.addStep});
+      // The Calculator has a single SIP with a single step-up, so a flat top-up
+      // can't be represented there — added to state.sip it would ride the plan's
+      // step-up and overshoot. Solve the new total SIP directly instead.
+      const newSip  = Engine.requiredSip(r.required, {holdings:state.holdings,
+                        sipstep:state.sipstep, ret:state.ret, years:r.years});
+      Fire.last.addFlat = addFlat; Fire.last.addStep = addStep; Fire.last.newSip = newSip;
+
+      document.getElementById("gap_fix_sub").textContent =
+        `Closing ${inrShort(r.gap)} over ${r.years} years at ${state.ret}% needs one of these as a top-up alongside your current ${inrShort(state.sip)}/mo.`;
+      document.getElementById("gp_addsip").textContent = inr(addFlat);
+      document.getElementById("gp_addsip_step").textContent = inr(addStep);
+      document.getElementById("gp_addsip_step_x").textContent = `starting, +${Fire.s.addStep}% a year`;
+      document.getElementById("gap_vs_fixed").className = "side" + (addFlat<=addStep ? "" : " win");
+      document.getElementById("gap_vs_step").className  = "side" + (addStep<addFlat  ? " win" : "");
+      document.getElementById("gap_apply_note").textContent = state.sipstep>0
+        ? `Sets your Calculator SIP to ${inr(newSip)}/mo — less than a flat top-up because your existing ${state.sipstep}% step-up lifts it each year. Lands exactly on ${inrShort(r.required)}.`
+        : `Sets your Calculator SIP to ${inr(newSip)}/mo, landing exactly on ${inrShort(r.required)}.`;
+    }else{
+      document.getElementById("gap_ok_txt").textContent =
+        `On track — your plan clears the ${inrShort(r.required)} target by ${inrShort(-r.gap)} at age ${Fire.s.retAge}.`;
+    }
+  },
+
+  applyGap(){
+    const r = Fire.last;
+    if(!r || !(r.gap>0) || !isFinite(r.newSip)) return;
+    state.sip = Math.round(r.newSip);      // solved against the plan's own step-up
+    state.acc = r.years;
+    if(state.sip > parseFloat(F.sip.range.max)) F.sip.range.max = Math.ceil(state.sip/50000)*50000;
+    ["sip","acc"].forEach(fmtField);
+    render();
+    Platform.show("calc");
+  }
+};
+
+/* -------------------------------------------------------------------------
+   SECTION F · FEATURE 4 — SCENARIO COMPARISON
+   Three independent plans on one engine and one chart. Scenarios start from a
+   zero balance on purpose, so the comparison isolates the effect of the SIP
+   settings rather than a shared opening corpus.
+   ------------------------------------------------------------------------- */
+const SCEN_COLORS = ["#1d7a53","#c7952f","#3f6fa8"];   // validated: CVD ΔE 15.0 (protan)
+const Scenarios = {
+  list: [
+    {key:"A", on:true,  sip:25000, step:10, ret:12,   years:20},
+    {key:"B", on:true,  sip:35000, step:0,  ret:12,   years:20},
+    {key:"C", on:false, sip:20000, step:15, ret:13.5, years:20}
+  ],
+  geom:null,
+
+  init(){
+    const host = document.getElementById("scenCards");
+    Scenarios.list.forEach((sc, idx)=>{
+      const card = document.createElement("div");
+      card.className = "scen-card" + (sc.on ? "" : " off");
+      card.style.setProperty("--sc", SCEN_COLORS[idx]);
+      card.innerHTML =
+        `<div class="scen-head">
+           <span class="scen-name"><span class="scen-dot"></span>Scenario ${sc.key}</span>
+           <label class="scen-toggle"><input type="checkbox" ${sc.on?"checked":""}>On</label>
+         </div>
+         <div class="scen-body"></div>
+         <div class="scen-out">
+           <div class="so"><div class="sok">Total invested</div><div class="sov s-inv">—</div></div>
+           <div class="so"><div class="sok">Wealth created</div><div class="sov s-gain">—</div></div>
+           <div class="so full"><div class="sok">Final corpus</div><div class="sov s-corp" style="font-size:1.2rem;">—</div></div>
+         </div>`;
+      host.appendChild(card);
+      sc.card = card;
+      const body = card.querySelector(".scen-body");
+      makeCtrl(body, {label:"Monthly SIP", unit:"₹", min:0, max:500000, step:500, value:sc.sip,
+        onInput:v=>{ sc.sip=v; Scenarios.refresh(); }});
+      makeCtrl(body, {label:"SIP step-up", unit:"%", min:0, max:25, step:0.5, value:sc.step,
+        onInput:v=>{ sc.step=v; Scenarios.refresh(); }});
+      makeCtrl(body, {label:"Expected return", unit:"%", min:1, max:30, step:0.5, value:sc.ret,
+        onInput:v=>{ sc.ret=v; Scenarios.refresh(); }});
+      makeCtrl(body, {label:"Time horizon", unit:"yrs", min:1, max:40, step:1, value:sc.years,
+        onInput:v=>{ sc.years=Math.round(v); Scenarios.refresh(); }});
+      card.querySelector(".scen-toggle input").addEventListener("change", e=>{
+        sc.on = e.target.checked;
+        card.classList.toggle("off", !sc.on);
+        Scenarios.refresh();
+      });
+    });
+    Scenarios.attachTip();
+    Scenarios.refresh();
+  },
+
+  results(){
+    return Scenarios.list.map((sc,idx)=>{
+      const a = Engine.accumulate({holdings:0, sip:sc.sip, sipstep:sc.step, ret:sc.ret, years:sc.years});
+      return {...sc, idx, color:SCEN_COLORS[idx], corpus:a.corpus, invested:a.invested, gains:a.gains};
+    });
+  },
+
+  // Month-by-month path for the chart (same engine, sampled yearly).
+  path(sc){
+    const i = Engine.mRate(sc.ret), n = Math.round(sc.years*12);
+    let bal=0, cur=sc.sip; const pts=[{y:0,v:0}];
+    for(let m=1;m<=n;m++){
+      bal = bal*(1+i) + cur;
+      if(m%12===0){ cur *= (1+sc.step/100); pts.push({y:m/12, v:bal}); }
+    }
+    if(n%12!==0) pts.push({y:n/12, v:bal});
+    return pts;
+  },
+
+  refresh(){
+    const rs = Scenarios.results();
+    const live = rs.filter(r=>r.on);
+    const best = live.reduce((a,b)=> !a || b.corpus>a.corpus ? b : a, null);
+
+    rs.forEach(r=>{
+      r.card.querySelector(".s-inv").textContent  = inrShort(r.invested);
+      r.card.querySelector(".s-gain").textContent = inrShort(r.gains);
+      r.card.querySelector(".s-corp").textContent = inrShort(r.corpus);
+      r.card.querySelector(".s-corp").style.color = r.color;
+      r.card.querySelector(".best-badge")?.remove();
+      if(best && r.key===best.key && live.length>1){
+        const b=document.createElement("span");
+        b.className="best-badge"; b.textContent="★ Best";
+        r.card.querySelector(".scen-head").appendChild(b);
+      }
+    });
+
+    document.getElementById("scen_legend").innerHTML = live.map(r=>
+      `<span><i style="background:${r.color}"></i>Scenario ${r.key} · ${inrShort(r.sip)}/mo @ ${r.ret}%</span>`).join("");
+    document.getElementById("scen_best_note").textContent = best && live.length>1
+      ? `Scenario ${best.key} leads by ${inrShort(best.corpus - live.filter(x=>x.key!==best.key)
+          .reduce((a,b)=>Math.max(a,b.corpus),0))}`
+      : "";
+
+    document.getElementById("scen_tbody").innerHTML = rs.map(r=>
+      `<tr style="${r.on?"":"opacity:.42"}">
+         <td><span class="swatch" style="background:${r.color}"></span>Scenario ${r.key}${best&&r.key===best.key&&live.length>1?' <span class="best-badge">★ Best</span>':''}</td>
+         <td>${inr(r.sip)}</td><td>${r.step}%</td><td>${r.ret}%</td><td>${r.years} yrs</td>
+         <td>${inrShort(r.invested)}</td><td>${inrShort(r.gains)}</td>
+         <td style="font-weight:700;color:${r.color}">${inrShort(r.corpus)}</td>
+       </tr>`).join("");
+
+    Scenarios.draw();
+  },
+
+  draw(){
+    const cv = document.getElementById("scenChart");
+    const {ctx,w,h} = setupCanvas(cv);
+    if(w<=0||h<=0) return;
+    ctx.clearRect(0,0,w,h);
+    const live = Scenarios.results().filter(r=>r.on);
+    const padL=62, padR=54, padT=16, padB=28;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+
+    if(!live.length){
+      ctx.fillStyle="#8b9088"; ctx.font="13px 'Hanken Grotesk',sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("Switch on a scenario to compare", w/2, h/2);
+      Scenarios.geom=null; return;
+    }
+
+    const paths  = live.map(r=>({...r, pts:Scenarios.path(r)}));
+    const maxY   = Math.max(...paths.map(p=>p.years));
+    const maxV   = Math.max(...paths.flatMap(p=>p.pts.map(q=>q.v)), 1);
+    const X = y => padL + (y/maxY)*plotW;
+    const Y = v => padT + plotH - (v/maxV)*plotH;
+
+    ctx.font="11px 'Hanken Grotesk', sans-serif"; ctx.textBaseline="middle";
+    for(let g=0;g<=4;g++){
+      const val=maxV*g/4, y=Y(val);
+      ctx.strokeStyle="rgba(28,33,28,.08)"; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillStyle="#8b9088"; ctx.textAlign="right"; ctx.fillText(inrShort(val), padL-8, y);
+    }
+    ctx.textAlign="center"; ctx.textBaseline="top";
+    const tick = maxY<=10?2:(maxY<=20?5:10);
+    for(let yr=0; yr<=maxY; yr+=tick){
+      ctx.fillStyle="#8b9088"; ctx.fillText("Yr "+yr, X(yr), h-padB+7);
+    }
+
+    paths.forEach(p=>{
+      ctx.beginPath();
+      p.pts.forEach((q,ix)=> ix?ctx.lineTo(X(q.y),Y(q.v)):ctx.moveTo(X(q.y),Y(q.v)));
+      ctx.strokeStyle=p.color; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.stroke();
+      // direct end-label: identity never rests on colour alone
+      const last=p.pts[p.pts.length-1];
+      ctx.beginPath(); ctx.arc(X(last.y),Y(last.v),4,0,Math.PI*2);
+      ctx.fillStyle=p.color; ctx.fill();
+      ctx.strokeStyle="#fbf9f3"; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=p.color; ctx.font="700 11px 'Hanken Grotesk',sans-serif";
+      ctx.textAlign="left"; ctx.textBaseline="middle";
+      ctx.fillText(" "+p.key, X(last.y)+5, Y(last.v));
+    });
+
+    Scenarios.geom={padL,padR,padT,padB,plotW,plotH,maxY,maxV,X,Y,paths};
+  },
+
+  attachTip(){
+    const cv=document.getElementById("scenChart"), tip=document.getElementById("scenTip");
+    cv.addEventListener("mousemove", e=>{
+      const g=Scenarios.geom;
+      if(!g){ tip.style.opacity=0; return; }
+      const r=cv.getBoundingClientRect(), x=e.clientX-r.left;
+      const yr=Math.min(Math.max((x-g.padL)/g.plotW,0),1)*g.maxY;
+      const rows=g.paths.map(p=>{
+        const pt=p.pts.reduce((a,b)=> Math.abs(b.y-yr)<Math.abs(a.y-yr)?b:a, p.pts[0]);
+        return `<span style="color:${p.color}">■</span> ${p.key}: ${inr(pt.v)}`;
+      });
+      tip.innerHTML=`<b>Year ${Math.round(yr)}</b><br>`+rows.join("<br>");
+      tip.style.opacity=1;
+      let tx=x+14; if(tx > r.width-170) tx=x-170;
+      tip.style.left=tx+"px"; tip.style.top="10px";
+    });
+    cv.addEventListener("mouseleave", ()=> tip.style.opacity=0);
+  }
+};
+
+/* -------------------------------------------------------------------------
+   SECTION G · FEATURE 5 — MONTE CARLO
+   One normally-distributed ANNUAL return per year per path, converted to a
+   monthly rate so the inner loop stays identical to the deterministic engine.
+   Runs against whichever mode the Calculator is in: accumulation for SIP,
+   drawdown survival for lump sum.
+   ------------------------------------------------------------------------- */
+const MonteCarlo = {
+  s: { vol:15, sims:2000, target:0, seed:20260927 },
+  c: {},
+  res: null,
+  geom: null,
+
+  init(){
+    const host = document.getElementById("mcCtrls");
+    MonteCarlo.c.vol = makeCtrl(host, {label:"Volatility", hint:"annual std. deviation", unit:"%",
+      min:0, max:40, step:0.5, value:MonteCarlo.s.vol, onInput:v=>{ MonteCarlo.s.vol=v; MonteCarlo.stale(); }});
+    MonteCarlo.c.sims = makeCtrl(host, {label:"Number of simulations", unit:"", min:1000, max:10000,
+      step:500, value:MonteCarlo.s.sims, minLbl:"1,000", maxLbl:"10,000",
+      onInput:v=>{ MonteCarlo.s.sims=Math.round(v); MonteCarlo.stale(); }});
+    MonteCarlo.c.target = makeCtrl(host, {label:"Success target", hint:"corpus you must reach", unit:"₹",
+      min:0, max:250000000, step:100000, value:MonteCarlo.s.target,
+      onInput:v=>{ MonteCarlo.s.target=v; MonteCarlo.targetTouched=true; MonteCarlo.stale(); }});
+    document.getElementById("mc_run").addEventListener("click", ()=> MonteCarlo.run());
+    document.getElementById("mc_reroll").addEventListener("click", ()=>{
+      MonteCarlo.s.seed = (Math.random()*4294967295)>>>0; MonteCarlo.run();
+    });
+    MonteCarlo.attachTip();
+    MonteCarlo.refreshSource();
+  },
+
+  // The expected return always comes from the Calculator — one source of truth.
+  plan(){
+    const lump = state.mode === "lumpsum";
+    return {
+      lump,
+      years: lump ? state.swpyears : state.acc,
+      ret:   state.ret,
+      holdings: state.holdings,
+      sip:   lump ? 0 : state.sip,
+      sipstep: lump ? 0 : state.sipstep,
+      swp:   lump ? state.swp : 0,
+      swpstep: lump ? state.swpstep : 0
+    };
+  },
+
+  refreshSource(){
+    const p = MonteCarlo.plan();
+    document.getElementById("mc_mode_lbl").textContent = p.lump ? "Lump sum → SWP" : "SIP accumulation";
+    document.getElementById("mc_src").textContent = p.lump
+      ? `${inrShort(p.holdings)} drawn at ${inrShort(p.swp)}/mo for ${p.years} yrs, ${p.ret}% expected`
+      : `${inrShort(p.holdings)} + ${inrShort(p.sip)}/mo for ${p.years} yrs, ${p.ret}% expected`;
+    document.getElementById("mc_succ_sub").textContent = p.lump
+      ? "paths that never run dry" : "paths reaching target";
+
+    // Default target = the deterministic plan's own outcome over the SAME horizon
+    // the simulation runs. Seeding it from the FIRE number would compare a
+    // retirement-age corpus against a shorter accumulation and always read 0%.
+    if(!MonteCarlo.targetTouched){
+      const t = p.lump ? 0
+        : Engine.accumulate({holdings:p.holdings, sip:p.sip, sipstep:p.sipstep,
+                             ret:p.ret, years:p.years}).corpus;
+      MonteCarlo.s.target = Math.round(t/100000)*100000;
+      MonteCarlo.c.target.set(MonteCarlo.s.target, true);
+    }
+    MonteCarlo.stale();
+  },
+
+  // Signature of everything a run depends on, so a mere resize or an unrelated
+  // re-render never falsely reports the results as out of date.
+  sig(){
+    const p = MonteCarlo.plan();
+    return [p.lump,p.years,p.ret,p.holdings,p.sip,p.sipstep,p.swp,p.swpstep,
+            MonteCarlo.s.vol,MonteCarlo.s.sims,MonteCarlo.s.target,MonteCarlo.s.seed].join("|");
+  },
+
+  stale(){
+    if(!MonteCarlo.res) return;
+    const changed = MonteCarlo.res.sig !== MonteCarlo.sig();
+    document.getElementById("mc_status").textContent = changed
+      ? "Settings changed — run again"
+      : `${MonteCarlo.res.sims.toLocaleString("en-IN")} paths in ${MonteCarlo.res.ms.toFixed(0)} ms`;
+  },
+
+  run(){
+    const p = MonteCarlo.plan();
+    const {vol, sims, seed, target} = MonteCarlo.s;
+    const rand = Engine.rng(seed);
+    const mu = p.ret/100, sd = vol/100;
+    const n = Math.round(p.years);
+    const out = new Float64Array(sims);
+    let success = 0;
+    const t0 = performance.now();
+
+    for(let s=0;s<sims;s++){
+      let bal = p.holdings, cur = p.lump ? p.swp : p.sip, ruined = false;
+      for(let y=0;y<n;y++){
+        // One annual draw, floored above -95% so the monthly conversion stays real.
+        const r = Math.max(mu + sd*Engine.normal(rand), -0.95);
+        const i = Math.pow(1+r, 1/12) - 1;
+        for(let m=0;m<12;m++){
+          if(p.lump){
+            bal = bal*(1+i);
+            const w = Math.min(cur, Math.max(bal,0));
+            bal -= w;
+            if(bal<=0){ bal=0; ruined=true; }
+          }else{
+            bal = bal*(1+i) + cur;
+          }
+        }
+        cur *= 1 + (p.lump ? p.swpstep : p.sipstep)/100;
+      }
+      out[s] = bal;
+      if(p.lump ? (!ruined && bal>=target) : (bal>=target)) success++;
+    }
+
+    const sorted = Array.from(out).sort((a,b)=>a-b);
+    MonteCarlo.res = {
+      sorted, sims, target, lump:p.lump, years:n, sig:MonteCarlo.sig(),
+      successPct: success/sims*100,
+      p5:  Engine.percentile(sorted,0.05),
+      p50: Engine.percentile(sorted,0.50),
+      p95: Engine.percentile(sorted,0.95),
+      ms: performance.now()-t0
+    };
+    MonteCarlo.renderOut();
+  },
+
+  renderOut(){
+    const r = MonteCarlo.res; if(!r) return;   // nothing to redraw before a run
+    document.getElementById("mc_empty").style.display = "none";
+    document.getElementById("mc_status").textContent =
+      `${r.sims.toLocaleString("en-IN")} paths in ${r.ms.toFixed(0)} ms`;
+    setNum("mc_p5",  inr(r.p5));
+    setNum("mc_p50", inr(r.p50));
+    setNum("mc_p95", inr(r.p95));
+    document.getElementById("mc_succ").textContent = r.successPct.toFixed(1)+"%";
+    document.getElementById("mc_bar").style.width = r.successPct.toFixed(1)+"%";
+
+    // The headline sentence: a probability tied to a number they chose.
+    const pct = r.successPct.toFixed(0);
+    const art = /^(8|11|18)/.test(pct) ? "an" : "a";      // "an 84%", but "a 40%"
+    const line = document.getElementById("mc_line");
+    if(r.lump && r.target<=0){
+      line.innerHTML = `There is ${art} <b>${pct}% chance</b> your corpus lasts the full ${r.years} years without running dry.`;
+    }else{
+      line.innerHTML = `There is ${art} <b>${pct}% chance</b> of achieving at least <b>${inr(r.target)}</b>.`;
+    }
+    // The same statement read the other way round: a floor you can bank on.
+    const p20 = Engine.percentile(r.sorted, 0.20);
+    document.getElementById("mc_sub").innerHTML =
+      `8 in 10 paths finished above <b style="color:var(--brass-soft)">${inr(p20)}</b> · ` +
+      `spread of ${inrShort(r.p5)} – ${inrShort(r.p95)} across ${r.sims.toLocaleString("en-IN")} paths.`;
+    MonteCarlo.draw();
+  },
+
+  draw(){
+    const cv = document.getElementById("mcChart");
+    const {ctx,w,h} = setupCanvas(cv);
+    if(w<=0||h<=0) return;
+    ctx.clearRect(0,0,w,h);
+    const r = MonteCarlo.res;
+    if(!r){ MonteCarlo.geom=null; return; }
+
+    const padL=52, padR=16, padT=16, padB=30;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+    // Clip the long right tail at P99 so the bulk of the distribution stays legible.
+    const hi = Math.max(Engine.percentile(r.sorted,0.99), r.target*1.05, 1);
+    const BINS = 38, bw = hi/BINS;
+    const bins = new Array(BINS).fill(0);
+    r.sorted.forEach(v=> bins[Math.min(Math.floor(v/bw), BINS-1)]++);
+    const peak = Math.max(...bins,1);
+
+    const X = v => padL + (Math.min(v,hi)/hi)*plotW;
+    const Y = c => padT + plotH - (c/peak)*plotH;
+
+    ctx.font="11px 'Hanken Grotesk', sans-serif"; ctx.textBaseline="middle";
+    for(let g=0;g<=4;g++){
+      const y = padT + plotH - (plotH*g/4);
+      ctx.strokeStyle="rgba(28,33,28,.08)"; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillStyle="#8b9088"; ctx.textAlign="right";
+      ctx.fillText(Math.round(peak*g/4).toLocaleString("en-IN"), padL-8, y);
+    }
+
+    // bars, split at the target so shortfall reads instantly
+    bins.forEach((c,ix)=>{
+      if(!c) return;
+      const x0=X(ix*bw), x1=X((ix+1)*bw);
+      const below = (ix+0.5)*bw < r.target;
+      ctx.fillStyle = below ? "rgba(188,79,44,.45)" : "rgba(20,84,59,.55)";
+      ctx.fillRect(x0+1, Y(c), Math.max(x1-x0-2,1), plotH+padT-Y(c));   // 2px surface gap
+    });
+
+    ctx.textBaseline="top";
+    for(let g=0;g<=4;g++){
+      const v=hi*g/4;
+      // keep the end labels inside the plot instead of letting them clip
+      ctx.textAlign = g===0 ? "left" : g===4 ? "right" : "center";
+      ctx.fillStyle="#8b9088"; ctx.fillText(inrShort(v), X(v), h-padB+8);
+    }
+
+    const marker = (v,color,label,row)=>{
+      if(v<=0 || v>hi) return;
+      ctx.beginPath(); ctx.setLineDash([5,4]);
+      ctx.moveTo(X(v),padT); ctx.lineTo(X(v),padT+plotH);
+      ctx.strokeStyle=color; ctx.lineWidth=1.8; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=color; ctx.font="700 10.5px 'Hanken Grotesk',sans-serif";
+      ctx.textBaseline="bottom";
+      const flip = X(v) > w*0.72;
+      ctx.textAlign = flip ? "right" : "left";
+      ctx.fillText(" "+label+" ", X(v) + (flip?-3:3), padT + 11 + row*13);
+    };
+    // Median and target sit on the same axis and often land near each other;
+    // stack the labels when they would otherwise overprint.
+    const collide = r.target>0 && Math.abs(X(r.target) - X(r.p50)) < 108;
+    marker(r.p50, "#1c211c", "Median "+inrShort(r.p50), 0);
+    if(r.target>0) marker(r.target, "#b88a2e", "Target "+inrShort(r.target), collide?1:0);
+
+    MonteCarlo.geom={padL,padR,padT,padB,plotW,plotH,hi,bw,bins,peak,X,Y};
+  },
+
+  attachTip(){
+    const cv=document.getElementById("mcChart"), tip=document.getElementById("mcTip");
+    cv.addEventListener("mousemove", e=>{
+      const g=MonteCarlo.geom, r=MonteCarlo.res;
+      if(!g||!r){ tip.style.opacity=0; return; }
+      const rc=cv.getBoundingClientRect(), x=e.clientX-rc.left;
+      const ix=Math.floor(((x-g.padL)/g.plotW)*g.bins.length);
+      if(ix<0||ix>=g.bins.length){ tip.style.opacity=0; return; }
+      const c=g.bins[ix];
+      tip.innerHTML=`<b>${inrShort(ix*g.bw)} – ${inrShort((ix+1)*g.bw)}</b><br>`+
+        `${c.toLocaleString("en-IN")} paths · ${(c/r.sims*100).toFixed(1)}%`;
+      tip.style.opacity=1;
+      let tx=x+14; if(tx > rc.width-180) tx=x-180;
+      tip.style.left=tx+"px"; tip.style.top="10px";
+    });
+    cv.addEventListener("mouseleave", ()=> tip.style.opacity=0);
+  }
+};
+
+/* -------------------------------------------------------------------------
+   SECTION H · BOOT
+   ------------------------------------------------------------------------- */
+Goals.init();
+Goal.init();
+Fire.init();          // must precede MonteCarlo: it seeds the default success target
+Scenarios.init();
+MonteCarlo.init();
+platformSync = Platform.sync;   // from here on, main-calculator edits flow outward
+Platform.sync();
+</script>
+</body>
+</html>
